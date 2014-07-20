@@ -1,0 +1,10 @@
+html, body { margin: 0; padding: 0; }
+.hide { display: none;}
+.show { display: block;}
+#signin-button,
+#profile{
+    text-align: center;
+    margin: 100px auto;
+}
+#signin-button h4{ margin-bottom: 40px; }
+#profile h1{ margin-bottom: 50px; }

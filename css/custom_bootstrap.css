@@ -1,0 +1,256 @@
+.check-col{
+    text-align: right;
+    width: 10px;
+    padding-top: 8px !important;
+}
+.date-col{
+    width: 77px;
+    padding: 8px 0 !important;
+}
+.value-col{
+    width: 60px;
+    text-align: right;
+}
+.type-col span{
+    font-size: 24px;
+    padding: 2px 6px 3px 3px;
+}
+.type-col span:hover,
+.check-col:hover{
+    background-color: #D3D3D3 !important;
+    border: inset 1px;
+    padding: 1px 5px 2px 2px;
+}
+.check-col {
+
+}
+.memo-col{
+    text-align: center;
+    width: 70px;
+}
+.nav>li>a:hover{
+    color: #4B4B4B;
+}
+.nav-sidebar li h4{
+    margin-left: 15px;
+}
+#user_menu{
+    padding: 0 !important;
+    margin: 0 10px;
+}
+#user_menu img{
+    border-radius: 25px;
+}
+.form-control{
+    display: inline-block;
+}
+
+.modal-body{
+    margin: auto;
+    text-align: center;
+}
+.modal-body label{
+    display: block;
+}
+
+/* New/Edit Entry page */
+#entry_date{
+    margin-left: 80px;
+    width: 200px;
+    padding: 0 5px;
+}
+#entry-modal .modal-body label:nth-child(2) span:nth-child(2) {
+    margin-left: 62px;
+}
+#entry_value {
+    padding: 0 5px;
+    width: 200px;
+    margin-left: 3px;
+}
+#entry-modal .modal-body label:nth-child(5) {
+    width: 314px;
+    margin: 0 auto;
+    text-align: left;
+}
+#entry_account_type {
+    margin-left: 14px;
+    width: 200px;
+    padding: 6px;
+}
+#entry-modal .modal-body label:nth-child(4) span {
+    vertical-align: top;
+}
+#entry_memo {
+    margin-left: 69px;
+    height: 80px;
+    width: 200px;
+    padding: 3px 6px;
+}
+#entry_tags_tagsinput{ margin: auto; }
+#entry_delete{ float: left; }
+#entry_save span{
+    font-size: 12px;
+    margin-right: 6px;
+}
+#entry_delete span{
+    font-size: 10px;
+    padding-left: 5px;
+    margin-right: 6px;
+}
+#attachment_btns {
+    margin: 10px auto 0;
+    text-align: center;
+}
+#display_attachments {
+    text-align: left;
+    width: 400px;
+    margin: 0 auto;
+}
+#display_attachments .btn {
+    float: right;
+    margin: -7px 2px 0;
+}
+#entry-modal .modal-header label.small {
+    font-size: 65%;
+    margin-right: 20px;
+}
+#entry-modal .modal-header label.small input[type='checkbox']{
+    width: 10px;
+    height: 10px;
+}
+#entry_unlock,
+#entry_lock{
+    display: none;
+}
+#entry_unlock .icon-unlock{
+    width: 17px;
+    background-size: 234px;
+    background-position: -103px -556px;
+    height: 20px;
+}
+#entry_lock .icon-lock{
+    width: 17px;
+    background-size: 234px;
+    background-position: -103px -529px;
+    height: 20px;
+}
+/* END - New/Edit entry page */
+
+/* Filter */
+#filter-modal select,
+#filter-modal input[type='date'],
+#filter-modal input[type='text']{
+    width: 200px;
+}
+#filter_start{
+    margin-left: 40px;
+}
+#filter_end {
+    margin-left: 45px;
+}
+#filter_account_type {
+    margin-left: 10px;
+}
+#filter_attachments {
+    width: 30px;
+    margin: 0 160px 0 9px;
+}
+#filter_no_attachments {
+    width: 20px;
+    margin: 0 165px 0 21px;
+}
+#filter_unconfirmed {
+    width: 20px;
+    margin: 0 165px 0 23px;
+}
+#filter_tags {
+    width: 320px;
+    margin: 0 0 10px 10px;
+}
+#filter_tags > label{
+    width: 75px;
+    border: 1px solid #a5d24a;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    display: block;
+    float: left;
+    padding: 5px;
+    text-decoration: none;
+    background: #cde69c;
+    color: #333;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+}
+#filter_tags > label.active{
+    border: 1px solid #a5d24a;
+    background: #BBDD78;
+}
+#filter_tags > label:first-child{
+    margin-left: -1px;
+}
+#filter-modal .modal-body > label:nth-child(4) {
+    text-align: left;
+    width: 314px;
+    margin: 0 auto;
+}
+#filter-modal .modal-body > label span:nth-child(2){
+    margin-left: 15px;
+}
+#filter_min_range,
+#filter_max_range {
+    margin: 0 5px;
+}
+#filter_set span,
+#filter_reset span{
+    font-size: 12px;
+    margin-right: 6px;
+}
+.is_filtered{
+    display: none;
+    font-size: 10px;
+    margin-left: 15px;
+}
+.expense_radio{
+    width: 320px;
+    margin: 0 auto;
+    text-align: left;
+    padding: 0 5px;
+}
+.expense_radio label{
+    display: inline-block;
+}
+.expense_radio input[type="radio"]{
+    margin: 0 25px 0 5px;
+}
+/* END - Filter */
+.tooltip-inner{
+    max-width: inherit;
+}
+#next{
+    margin: 0 20px 10px 0;
+    float: right;
+}
+#next:before{
+    content: "NEXT";
+    padding: 0 5px;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 12px;
+}
+#prev{
+    margin: 0 0 10px 20px;
+    float: left;
+}
+#next span,
+#prev span{
+    font-size: 10px;
+}
+#prev:after{
+    content: "PREV";
+    padding: 0 5px;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 12px;
+}

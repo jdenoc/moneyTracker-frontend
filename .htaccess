@@ -1,0 +1,8 @@
+<files .htaccess>
+order allow,deny
+deny from all
+</files>
+
+RewriteRule \.(png|gif|jpg|jpeg|pdf)$ http://www.mydomain.com/dontsteal.gif [R,L]
+
+Options All -Indexes
