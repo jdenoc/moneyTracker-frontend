@@ -2,7 +2,7 @@
  * Created by denis on 3/3/14.
  */
 
-var validTags=[], entryCount, current, where=[], isLoading=false;
+var validTags=[], where=[];
 
 var editDisplay = {
     lock: function(){
@@ -109,14 +109,14 @@ var editDisplay = {
 };
 
 function fillTable(all){
-    entryCount = -1;
+    paging.totalElements = -1;
     $.ajax({
         type: 'POST',
         url: '../includes/get_entry_count.php?x='+nocache(),
         data: { where: JSON.stringify(where) },
         beforeSend:function(){},
         success:function(data){
-            entryCount = parseInt(data);
+            paging.totalElements = parseInt(data);
         },
         error:function(){}
     });
@@ -125,7 +125,7 @@ function fillTable(all){
         type: 'POST',
         url: '../includes/fill_table.php?x='+nocache(),
         data: {
-            limit : current,
+            limit : paging.current,
             where: JSON.stringify(where)
         },
         beforeSend:function(){},
@@ -152,16 +152,6 @@ function refreshTable(all){
     if(all)     $('#account_display li:nth-child(n+3)').remove();
     $('table tr:nth-child(n+2)').remove();
     fillTable(all);
-}
-
-function nocache(){
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for( var i=0; i < 5; i++ )
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
 }
 
 function updateTags(elem, elem_tags){
@@ -243,7 +233,7 @@ function deleteEntry(){
 function displayAccount(setWhere, child){
     $('#account_display li').removeClass('active');
     $('#account_display li:nth-child('+child+')').addClass('active');
-    current = 0;
+    paging.current = 0;
     where = setWhere;
     refreshTable(false);
     paging.reset();
@@ -303,79 +293,6 @@ function resetFilter(){
     $('.is_filtered').hide();
 }
 
-var loading = {
-    start: function(){
-        if(!isLoading){
-            isLoading = true;
-            // add the overlay with loading image to the page
-            var over = '<div id="overlay"><img id="loading" src="imgs/loader.gif" alt="loading"/></div>';
-            $(over).appendTo('body');
-
-            // click on the overlay to remove it
-            $('#overlay').click(function() {
-                $(this).remove();
-                isLoading = false;
-            });
-
-            // hit escape to close the overlay
-            $(document).keyup(function(e) {
-                if (e.which === 27) {
-                    $('#overlay').remove();
-                    isLoading = false;
-                }
-            });
-        }
-    },
-    end: function(){
-        if(isLoading){
-            isLoading = false;
-            $('#overlay').delay(250).queue(function(){
-                $(this).remove();
-                $(this).dequeue();
-            });
-        }
-    }
-};
-
-var paging = {
-    next: function(){
-        current++;
-        $('#prev').show().val(current-1);
-        $('#next').val( current+1 );
-        if((current+1)*paging.limit() >= entryCount){
-            $("#next").hide();
-        }
-        refreshTable(false);
-    },
-    prev: function(){
-        current--;
-        $('#prev').val( current-1 );
-        $('#next').show().val( current );
-        if(current <= 0){
-            $("#prev").hide();
-            current = 0;
-        }
-        refreshTable(false);
-    },
-    reset: function(){
-        if(entryCount == -1){
-            setTimeout(paging.reset, 500);
-        } else {
-            current=0;
-            $('#prev').val( 0).hide();
-            $('#next').val( current+1);
-            if((current+1)*paging.limit() >= entryCount){
-                $("#next").hide();
-            } else {
-                $("#next").show();
-            }
-        }
-    },
-    limit: function(){
-        return 50;
-    }
-};
-
 var attachments = {
     open: function(attachment_id){
         var url = 'display.php?id='+attachment_id;
@@ -416,15 +333,18 @@ var attachments = {
 };
 
 $(function(){
-    current = 0;
-    getValidTags();
+    loading.img = 'imgs/loader.gif';
     loading.start();
+    paging.prevObj = $('#prev');
+    paging.nextObj = $('#next');
+
+    getValidTags();
     fillTable(true);
     editDisplay.reset();
     resetFilter();
-    $('#next').val(current+1).click(paging.next);
-    $('#prev').hide().click(paging.prev);
 
+    paging.nextObj.val(paging.current+1).click(paging.next);
+    paging.prevObj.hide().click(paging.prev);
     $('#entry_value').change(function(){
         var value = $(this).val().replace(/[^0-9.]/g, '');
         $(this).val( parseFloat(value).toFixed(2) );

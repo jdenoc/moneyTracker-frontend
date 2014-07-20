@@ -5,10 +5,10 @@
  * Date: 2014-03-03
  */
 
-require_once(__DIR__.'/connection.php');
+require_once(__DIR__.'/../Lib/php/PDO_Connection.php');
 
 $id = $_REQUEST['id'];
-$db = new pdo_connection('jdenocco_receipt');        // TODO - change DB name to money_tracker
+$db = new PDO_Connection('jdenocco_receipt', __DIR__.'/../Lib/config/config.db.php');        // TODO - change DB name to money_tracker
 
 $entry = $db->getRow(
     "SELECT

@@ -4,7 +4,7 @@
  * Date: 2014-05-10
  */
 
-$session_title = include_once(__DIR__.'/includes/config.session.php');
+$session_title = include_once(__DIR__ . '/includes/config.session.php');
 session_name($session_title);
 session_start();
 if(empty($_SESSION['email'])){

@@ -6,14 +6,14 @@
  * Time: 12:42 AM
  */
 
-require_once(__DIR__.'/connection.php');
-$db = new pdo_connection('jdenocco_receipt');        // TODO - change DB name to money_tracker
+require_once(__DIR__.'/../Lib/php/PDO_Connection.php');
+$db = new PDO_Connection('jdenocco_receipt', __DIR__.'/../config/config.db.php');        // TODO - change DB name to money_tracker
 
 $valid_tags = $_REQUEST['valid_tags'];
 $data = json_decode($_REQUEST['entry_data'], true);
 
 // Attachment uploader
-$md5 = include_once(__DIR__.'/config.md5.php');
+$md5 = include_once(__DIR__ . '/../config/config.md5.php');
 $output_dir = __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."receipts_attachments".DIRECTORY_SEPARATOR;
 $tmp_dir = __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR;
 $has_attachment = $data['has_attachment'];

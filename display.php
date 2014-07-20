@@ -3,7 +3,7 @@
  * User: denis
  * Date: 3/23/14
  */
-$session_title = include_once(__DIR__.'/includes/config.session.php');
+$session_title = include_once(__DIR__ . '/config/config.session.php');
 session_name($session_title);
 session_start();
 
@@ -11,13 +11,13 @@ if(empty($_SESSION['email'])){
     display404();
 }
 
-require_once(__DIR__.'/includes/connection.php');
+require_once(__DIR__.'/Lib/php/PDO_Connection.php');
 
 $id = intval($_REQUEST['id']);
-$db = new pdo_connection('jdenocco_receipt');        // TODO - change DB name to money_tracker
+$db = new PDO_Connection('jdenocco_receipt', __DIR__.'/../config/config.db.php');        // TODO - change DB name to money_tracker
 
 $attachment = $db->getRow("SELECT * FROM attachments WHERE id=:attachment_id;", array('attachment_id'=>$id));
-$md5 = include_once(__DIR__.'/includes/config.md5.php');
+$md5 = include_once(__DIR__ . '/config/config.md5.php');
 $filename ='receipts_attachments/'. md5($attachment['attachment'].$md5).$attachment['ext'];
 
 if(!file_exists($filename)){

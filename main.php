@@ -3,7 +3,7 @@
  * User: denis
  * Date: 2014-02-03
  */
-$session_title = include_once(__DIR__.'/includes/config.session.php');
+$session_title = include_once(__DIR__ . '/config/config.session.php');
 session_name($session_title);
 session_start();
 if(empty($_SESSION['email'])){
@@ -12,8 +12,8 @@ if(empty($_SESSION['email'])){
 }
 // TODO - add/edit account
 // TODO -   fields: account, account_type(credit card, debit card, cheque, etc.), last_digits,
-require_once(__DIR__.'/includes/connection.php');
-$db = new pdo_connection('jdenocco_receipt');        // TODO - change DB name to money_tracker
+require_once(__DIR__.'/Lib/php/PDO_Connection.php');
+$db = new PDO_Connection('jdenocco_receipt', __DIR__.'/config/config.db.php');        // TODO - change DB name to money_tracker
 $account_types = $db->getAllRows("SELECT * FROM account_types");
 $account_type_options = '';
 foreach($account_types as $at){
@@ -39,6 +39,9 @@ foreach($account_types as $at){
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="Lib/js/loading.js"></script>
+    <script type="text/javascript" src="Lib/js/paging.js"></script>
+    <script type="text/javascript" src="Lib/js/misc.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
 
     <script src="jQuery-tags-input/jquery.tagsinput.min.js"></script>
@@ -50,7 +53,7 @@ foreach($account_types as $at){
     <!-- END - Drag and Drop code -->
 
     <link href="css/switch.css" rel="stylesheet" type="text/css" />
-    <link href="css/loading.css" rel="stylesheet" type="text/css" />
+    <link href="Lib/css/loading.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 

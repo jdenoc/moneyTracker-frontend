@@ -4,8 +4,8 @@
  * Date: 3/11/14
  */
 
-require_once(__DIR__.'/connection.php');
-$db = new pdo_connection('jdenocco_receipt');        // TODO - change DB name to money_tracker
+require_once(__DIR__.'/../Lib/php/PDO_Connection.php');
+$db = new PDO_Connection('jdenocco_receipt', __DIR__.'/../config/config.db.php');        // TODO - change DB name to money_tracker
 
 $where_array = empty($_REQUEST['where']) ? array() : json_decode($_REQUEST['where'], true);
 $where_stmt = array('entries.deleted=0');

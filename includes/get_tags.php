@@ -6,8 +6,8 @@
  * Time: 11:57 PM
  */
 
-require_once(__DIR__.'/connection.php');
-$db = new pdo_connection('jdenocco_receipt');        // TODO - change DB name to money_tracker
+require_once(__DIR__.'/../Lib/php/PDO_Connection.php');
+$db = new PDO_Connection('jdenocco_receipt', __DIR__.'/../config/config.db.php');        // TODO - change DB name to money_tracker
 
 $tags = $db->getAllRows("SELECT * FROM tags");
 header('Content-Type: application/json');
