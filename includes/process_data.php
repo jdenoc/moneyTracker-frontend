@@ -6,7 +6,7 @@
 
 class ProcessData {
 
-    private static $auth = 'test';
+    private static $auth;
     public static $error_title = 'Money-Tracker Request Error:';
 
     public static function make_call($url, $post=false, $post_data=array()){
@@ -37,7 +37,7 @@ class ProcessData {
 
     public static function list_accounts($data){
         // TODO - test
-        $accounts = json_decode(base64_decode($data), true);
+        $accounts = self::base_process($data);
         $display = '';
         $account_position = 3;
         foreach($accounts as $account){
@@ -57,7 +57,7 @@ class ProcessData {
             $tags = array();
         } else {
             if(empty($response_array['error'])){
-                $tags = self::base_process($tags_data['']);
+                $tags = self::base_process($tags_data['result']);
             } else {
                 error_log(self::$error_title.$response_array['error']);
                 $tags = array();
@@ -89,7 +89,7 @@ class ProcessData {
         return $display;
     }
 
-    public static function base_process($data){
+    private static function base_process($data){
         return json_decode(base64_decode($data), true);
     }
 
@@ -97,11 +97,19 @@ class ProcessData {
         return $data;
     }
 
-    public static function get_auth(){
+    private static function get_auth(){
+        if(is_null(self::$auth)){
+            self::set_auth();
+        }
         return self::$auth;
     }
+    
+    private static function set_auth(){
+        // TODO - find a better way to obtain this value. Maybe from a DB.
+        self::$auth = 'test';
+    }
 
-    public static function display($secret){
-        // TODO - rebuild?
+    public static function decode($data){
+        return base64_decode($data);
     }
 }

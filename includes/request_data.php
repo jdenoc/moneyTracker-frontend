@@ -18,7 +18,7 @@ switch($_REQUEST['type']){
 
     case 'tags':
         $uri = 'tags';
-        $callback = 'base_process';
+        $callback = 'decode';
         break;
 
     case 'delete_attachment':
@@ -44,9 +44,9 @@ switch($_REQUEST['type']){
         $callback = 'list_entries';
         break;
 
-    case 'get':
+    case 'entry':
         $uri = 'entry/id/'.$_POST['id'];
-        $callback = 'base_process';
+        $callback = 'decode';
         break;
 
     case 'save':
