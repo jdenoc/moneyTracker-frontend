@@ -95,7 +95,7 @@ foreach($account_types as $at){
         <div class="col-sm-3 col-md-2 sidebar">
             <ul id="account_display" class="nav nav-sidebar">
                 <li><h4>Accounts</h4></li>
-                <li class="active" onclick="resetFilter();displayAccount([],2)"><a href="#">Overview <span class="is_filtered">(filtered)</span></a></li>
+                <li class="active" onclick="filter.reset();displayAccount([],2)"><a href="#">Overview <span class="is_filtered">(filtered)</span></a></li>
             </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">

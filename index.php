@@ -6,7 +6,7 @@
  * Time: 11:35 AM
  */
 
-$session_title = include_once(__DIR__ . '/includes/config.session.php');
+$session_title = include_once(__DIR__ . '/config/config.session.php');
 session_name($session_title);
 session_start();
 if(!empty($_SESSION['email'])){
