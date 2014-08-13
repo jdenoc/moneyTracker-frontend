@@ -2,7 +2,7 @@
  * Created by denis on 3/3/14.
  */
 
-var validTags=[], where=[];
+var validTags=[], url='../includes/request_data.php?x=';
 
 var editDisplay = {
     lock: function(){
@@ -61,12 +61,15 @@ var editDisplay = {
     fill: function(entry_id){
         $.ajax({
             type: 'POST',
-            url: '../includes/fill_edit_display.php?x='+nocache(),
-            data: { id : entry_id },
-            beforeSend:function(){},
+            url: url+nocache(),
+            data: {
+                type: 'get',
+                id : entry_id
+            },
+            beforeSend: function(){},
             success:function(data){
                 // successful request
-                var tags='', editData = JSON.parse(data);
+                var tags='', editData = JSON.parse($.base64.decode(data));
                 $(editData['tags']).each(function(index, tagObj){
                     if(tags == '' || typeof tags == 'undefined'){
                         tags = tagObj['tag'];
@@ -81,8 +84,8 @@ var editDisplay = {
                 $('#entry_memo').val(editData['memo']);
                 $("#entry_tags").importTags('');
                 $('#entry_tags').importTags(tags);
-                $('#entry_minus').prop('checked', editData['expense']);
-                $('#entry_confirm').prop('checked', editData['confirm']);
+                $('#entry_minus').prop('checked', parseInt(editData['expense']));
+                $('#entry_confirm').prop('checked', parseInt(editData['confirm']));
                 $('#entry_id').val(editData['id']);
 
                 if(editData['has_attachment']==1){
@@ -100,10 +103,12 @@ var editDisplay = {
                     editDisplay.lock();
                     $('#entry_unlock').show();
                 } else {
-                    saveEntry();
+                    entry.save();
                 }
             },
-            error:function(){}
+            error:function(){
+                // TODO - display error message
+            }
         });
     }
 };
@@ -112,36 +117,56 @@ function fillTable(all){
     paging.totalElements = -1;
     $.ajax({
         type: 'POST',
-        url: '../includes/get_entry_count.php?x='+nocache(),
-        data: { where: JSON.stringify(where) },
+        url: url+nocache(),
+        data: {
+            type: 'count',
+            where: $.base64.encode(JSON.stringify(entry.where))
+        },
         beforeSend:function(){},
         success:function(data){
-            paging.totalElements = parseInt(data);
+            paging.totalElements = parseInt($.base64.decode(data));
         },
-        error:function(){}
+        error:function(){
+            // TODO - display error message
+        }
     });
 
     $.ajax({
         type: 'POST',
-        url: '../includes/fill_table.php?x='+nocache(),
+        url: url+nocache(),
         data: {
-            limit : paging.current,
-            where: JSON.stringify(where)
+            type: 'list',
+            start : paging.current,
+            limit : paging.limit,
+            where: $.base64.encode(JSON.stringify(entry.where))
         },
         beforeSend:function(){},
         success:function(data){
             // successful request
-            $('table').append(data);
+            var entryData = $.base64.decode(data);
+            $('table').append(entryData);
             loading.end();
         },
-        error:function(){}
+        error:function(){
+            // TODO - display error message
+        }
     });
 
     if(all){
-        $.get('../includes/fill_account_display.php?x='+nocache(), function(data){
-            $('#account_display').append(data);
-            if(typeof where.group != 'undefined'){
-                $('#account_display li:nth-child('+(where.group + 2)+')').addClass('active');
+        $.ajax({
+            type: 'POST',
+            url: url+nocache(),
+            data: { type: 'list_accounts' },
+            beforeSend:function(){},
+            success:function(accountData){
+                // successful request
+                $('#account_display').append(accountData);
+                if(typeof entry.where.group != 'undefined'){
+                    $('#account_display li:nth-child('+(entry.where.group + 2)+')').addClass('active');
+                }
+            },
+            error:function(){
+                // TODO - display error message
             }
         });
     }
@@ -162,136 +187,159 @@ function updateTags(elem, elem_tags){
 }
 
 function getValidTags(){
-    $.get('../includes/get_tags.php?x='+nocache(), function(data){
-        var filterTags = '';
-        $(data).each(function(idx, obj){
-            validTags.push( obj.tag );
-            filterTags += '<label class="btn btn-info"><input type="checkbox" value="'+obj.id+'"/>'+obj.tag+'</label>';
-        });
-        $('#filter_tags').append(filterTags);
-        $('#entry_tags_tagsinput')
-            .addClass('form-control')
-            .attr({
-                'data-toggle':"tooltip",
-                'data-placement':"top",
-                title:validTags.join(', ')
-            })
-            .tooltip();
-    });
-}
-
-function saveEntry(){
-    var entryData = {};
-    entryData.id = $('#entry_id').val();
-    entryData.date = $('#entry_date').val();
-    entryData.value = $('#entry_value').val();
-    entryData.account_type = $('#entry_account_type').val();
-    entryData.memo = $('#entry_memo').val();
-    entryData.tags = $('#entry_tags').val().split(',');
-    entryData.expense = $('#entry_minus').prop('checked') ? 1 : 0;
-    entryData.confirm = $('#entry_confirm').prop('checked') ? 1 : 0;
-    entryData.attachments = JSON.parse( $('#entry_attachments').val() );
-    entryData.has_attachment = $('#entry_has_attachment').val();
-
-    $('#entry_data').val( JSON.stringify(entryData) );
-}
-
-function submitEntry(){
     $.ajax({
         type: 'POST',
-        url: '../includes/save_entry.php?x='+nocache(),
-        data: {
-            entry_data : $('#entry_data').val(),
-            valid_tags : validTags
-        },
+        url: url+nocache(),
+        data: { type: 'tags' },
         beforeSend:function(){},
         success:function(data){
-            // successful request
-            refreshTable(true);
-            editDisplay.reset();
+            var filterTags = '';
+            var allTags = JSON.parse(data);
+            $(allTags).each(function(idx, obj){
+                validTags.push( obj.tag );
+                filterTags += '<label class="btn btn-info"><input type="checkbox" value="'+obj.id+'"/>'+obj.tag+'</label>';
+            });
+            $('#filter_tags').append(filterTags);
+            $('#entry_tags_tagsinput')
+                .addClass('form-control')
+                .attr({
+                    'data-toggle':"tooltip",
+                    'data-placement':"top",
+                    title:validTags.join(', ')
+                })
+                .tooltip();
         },
-        error:function(){}
+        error:function(){
+            // TODO - display error message
+        }
     });
 }
 
-function deleteEntry(){
-    var entryId = $('#entry_id').val();
-    if(confirm('Are you sure you want to delete Entry: '+entryId)){
+var entry = {
+    where:[],
+    save: function(){
+        var entryData = {};
+        entryData.id = $('#entry_id').val();
+        entryData.date = $('#entry_date').val();
+        entryData.value = $('#entry_value').val();
+        entryData.account_type = $('#entry_account_type').val();
+        entryData.memo = $('#entry_memo').val();
+        entryData.tags = $('#entry_tags').val().split(',');
+        entryData.expense = $('#entry_minus').prop('checked') ? 1 : 0;
+        entryData.confirm = $('#entry_confirm').prop('checked') ? 1 : 0;
+        entryData.attachments = JSON.parse( $('#entry_attachments').val() );
+        entryData.has_attachment = $('#entry_has_attachment').val();
+
+        $('#entry_data').val( JSON.stringify(entryData) );
+    },
+    submit: function(){
         $.ajax({
             type: 'POST',
-            url: '../includes/delete_entry.php?x='+nocache(),
-            data: { id : entryId },
+            url: url+nocache(),
+            data: {
+                type: 'save',
+                entry_data : $.base64.encode( $('#entry_data').val() )
+            },
             beforeSend:function(){},
             success:function(data){
-                refreshTable(true);
+                // successful request
+                if(parseInt(data) == 1){
+                    refreshTable(true);
+                    editDisplay.reset();
+                }
             },
-            error:function(){}
+            error:function(){
+                // TODO - display error message
+            }
         });
+    },
+    del: function(){
+        var entryId = $('#entry_id').val();
+        if(confirm('Are you sure you want to delete Entry: '+entryId)){
+            $.ajax({
+                type: 'POST',
+                url: url+nocache(),
+                data: {
+                    type: 'delete_entry',
+                    id : entryId
+                },
+                beforeSend:function(){},
+                success:function(data){
+                    if(parseInt(data) == 1){
+                        refreshTable(true);
+                    }
+                },
+                error:function(){
+                    // TODO - display error message
+                }
+            });
+        }
     }
-}
+};
 
 function displayAccount(setWhere, child){
     $('#account_display li').removeClass('active');
     $('#account_display li:nth-child('+child+')').addClass('active');
     paging.current = 0;
-    where = setWhere;
+    entry.where = setWhere;
     refreshTable(false);
     paging.reset();
 }
 
-function setFilter(){
-    var filter = {};
-    var minRange = $('#filter_min_range');
-    var maxRange = $('#filter_max_range');
-    minRange.val( minRange.val().replace(/[^0-9.]/g, '') );
-    maxRange.val( maxRange.val().replace(/[^0-9.]/g, '') );
-    if($("#filter_start").val() != ''){
-        filter['start_date'] = $('#filter_start').val();
+var filter = {
+    set: function(){
+        var filter = {};
+        var minRange = $('#filter_min_range');
+        var maxRange = $('#filter_max_range');
+        minRange.val( minRange.val().replace(/[^0-9.]/g, '') );
+        maxRange.val( maxRange.val().replace(/[^0-9.]/g, '') );
+        if($("#filter_start").val() != ''){
+            filter['start_date'] = $('#filter_start').val();
+        }
+        if($("#filter_end").val() != ''){
+            filter['end_date'] = $('#filter_end').val();
+        }
+        if($("#filter_account_type").val() != ''){
+            filter['account_type'] = $('#filter_account_type').val();
+        }
+        var filterTags = [];
+        $('#filter_tags label.active input').each(function(idx, obj){
+            filterTags.push( $(obj).val() );
+        });
+        filter['tags'] = filterTags;
+        if($('.filter_expense:checked').val() != ''){
+            filter['expense'] = $(".filter_expense:checked").val();
+        }
+        if($('#filter_attachments').prop('checked')){
+            filter['attachments'] = 1;
+        }
+        if($('#filter_no_attachments').prop('checked')){
+            filter['attachments'] = 0;
+        }
+        if($('#filter_unconfirmed').prop('checked')){
+            filter['confirm'] = 1;
+        }
+        if(minRange.val() != '' && minRange.val() > 0){
+            filter['min_value'] = minRange.val();
+        }
+        if(maxRange.val() != '' && maxRange.val() > 0){
+            filter['max_value'] = maxRange.val();
+        }
+        $('.is_filtered').show();
+        displayAccount(filter, 2);
+    },
+    reset: function(){
+        $('#filter_start').val('');
+        $('#filter_end').val('');
+        $('#filter_account_type').val('');
+        $('#filter_tags label').removeClass('active');
+        $('.expense_radio .income_expense').prop('checked', true);
+        $('#filter_attachments').prop('checked', false);
+        $('#filter_no_attachments').prop('checked', false);
+        $('#filter_unconfirmed').prop('checked', false);
+        $('.is_filtered').hide();
     }
-    if($("#filter_end").val() != ''){
-        filter['end_date'] = $('#filter_end').val();
-    }
-    if($("#filter_account_type").val() != ''){
-        filter['account_type'] = $('#filter_account_type').val();
-    }
-    var filterTags = [];
-    $('#filter_tags label.active input').each(function(idx, obj){
-        filterTags.push( $(obj).val() );
-    });
-    filter['tags'] = filterTags;
-    if($('.filter_expense:checked').val() != ''){
-        filter['expense'] = $(".filter_expense:checked").val();
-    }
-    if($('#filter_attachments').prop('checked')){
-        filter['attachments'] = 1;
-    }
-    if($('#filter_no_attachments').prop('checked')){
-        filter['attachments'] = 0;
-    }
-    if($('#filter_unconfirmed').prop('checked')){
-        filter['confirm'] = 1;
-    }
-    if(minRange.val() != '' && minRange.val() > 0){
-        filter['min_value'] = minRange.val();
-    }
-    if(maxRange.val() != '' && maxRange.val() > 0){
-        filter['max_value'] = maxRange.val();
-    }
-    $('.is_filtered').show();
-    displayAccount(filter, 2);
-}
-
-function resetFilter(){
-    $('#filter_start').val('');
-    $('#filter_end').val('');
-    $('#filter_account_type').val('');
-    $('#filter_tags label').removeClass('active');
-    $('.expense_radio .income_expense').prop('checked', true);
-    $('#filter_attachments').prop('checked', false);
-    $('#filter_no_attachments').prop('checked', false);
-    $('#filter_unconfirmed').prop('checked', false);
-    $('.is_filtered').hide();
-}
+};
 
 var attachments = {
     open: function(attachment_id){
@@ -304,8 +352,9 @@ var attachments = {
         if(confirm('Are you sure you want to delete attchment: '+attachment_id)){
             $.ajax({
                 type: 'POST',
-                url: '../includes/delete_attachment.php?x='+nocache(),
+                url: url+nocache(),
                 data: {
+                    type: 'delete_attachment',
                     entry_id : entryId,
                     id: attachment_id
                 },
@@ -314,7 +363,9 @@ var attachments = {
                     $('#attachment_'+attachment_id).remove();
                     $('#entry_has_attachment').val( parseInt(data) );
                 },
-                error:function(){}
+                error:function(){
+                    // TODO - display error message
+                }
             });
         }
     },
@@ -341,10 +392,16 @@ $(function(){
     getValidTags();
     fillTable(true);
     editDisplay.reset();
-    resetFilter();
+    filter.reset();
 
-    paging.nextObj.val(paging.current+1).click(paging.next);
-    paging.prevObj.hide().click(paging.prev);
+    paging.nextObj.val(paging.current+1).click(function(){
+        paging.next();
+        refreshTable(false);
+    });
+    paging.prevObj.hide().click(function(){
+        paging.prev();
+        refreshTable(false);
+    });
     $('#entry_value').change(function(){
         var value = $(this).val().replace(/[^0-9.]/g, '');
         $(this).val( parseFloat(value).toFixed(2) );
@@ -356,10 +413,10 @@ $(function(){
         onChange: updateTags
     });
     $('#entry_save').click(function(){
-        saveEntry();
-        submitEntry();
+        entry.save();
+        entry.submit();
     });
-    $('#entry_delete').click(deleteEntry);
+    $('#entry_delete').click(entry.del);
     $('#entry_lock').click(editDisplay.lock);
     $('#entry_unlock').click(editDisplay.unlock);
     $('#entry-modal').on('hidden.bs.modal', function (e) {
@@ -387,8 +444,8 @@ $(function(){
         }
     });
     $('#filter_reset').click(function(){
-        resetFilter();
-        where = [];
+        filter.reset()();
+        entry.where = [];
     });
-    $('#filter_set').click(setFilter);
+    $('#filter_set').click(filter.set);
 });
