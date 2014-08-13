@@ -61,7 +61,7 @@ switch($_REQUEST['type']){
         $callback = 'do_nothing';
 }
 
-$api_url = 'http://services.local/index.php/api/money_tracker/';
+$api_url = 'http://services.local/api/money_tracker/';
 $json_response = ProcessData::make_call($api_url.$uri, $post, $post_data);
 
 if(!$response_array = json_decode($json_response, true)){
