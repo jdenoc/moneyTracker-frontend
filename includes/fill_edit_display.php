@@ -8,7 +8,7 @@
 require_once(__DIR__.'/../Lib/php/PDO_Connection.php');
 
 $id = $_REQUEST['id'];
-$db = new PDO_Connection('jdenocco_receipt', __DIR__.'/../Lib/config/config.db.php');        // TODO - change DB name to money_tracker
+$db = new PDO_Connection('jdenocco_receipt', __DIR__.'/../config/config.db.php');        // TODO - change DB name to money_tracker
 
 $entry = $db->getRow(
     "SELECT
