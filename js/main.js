@@ -63,13 +63,13 @@ var editDisplay = {
             type: 'POST',
             url: url+nocache(),
             data: {
-                type: 'get',
+                type: 'entry',
                 id : entry_id
             },
             beforeSend: function(){},
             success:function(data){
                 // successful request
-                var tags='', editData = JSON.parse($.base64.decode(data));
+                var tags='', editData = JSON.parse(data);
                 $(editData['tags']).each(function(index, tagObj){
                     if(tags == '' || typeof tags == 'undefined'){
                         tags = tagObj['tag'];
@@ -120,11 +120,11 @@ function fillTable(all){
         url: url+nocache(),
         data: {
             type: 'count',
-            where: $.base64.encode(JSON.stringify(entry.where))
+            where: JSON.stringify(entry.where)
         },
         beforeSend:function(){},
         success:function(data){
-            paging.totalElements = parseInt($.base64.decode(data));
+            paging.totalElements = parseInt(data);
         },
         error:function(){
             // TODO - display error message
@@ -138,12 +138,11 @@ function fillTable(all){
             type: 'list',
             start : paging.current,
             limit : paging.limit,
-            where: $.base64.encode(JSON.stringify(entry.where))
+            where: JSON.stringify(entry.where)
         },
         beforeSend:function(){},
-        success:function(data){
+        success:function(entryData){
             // successful request
-            var entryData = $.base64.decode(data);
             $('table').append(entryData);
             loading.end();
         },
@@ -238,7 +237,7 @@ var entry = {
             url: url+nocache(),
             data: {
                 type: 'save',
-                entry_data : $.base64.encode( $('#entry_data').val() )
+                entry_data : $('#entry_data').val()
             },
             beforeSend:function(){},
             success:function(data){
