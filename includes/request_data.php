@@ -61,9 +61,7 @@ switch($_REQUEST['type']){
         $callback = 'do_nothing';
 }
 
-$api_url = 'http://services.local/api/money_tracker/';
-$json_response = ProcessData::make_call($api_url.$uri, $post, $post_data);
-
+$json_response = ProcessData::make_call(ProcessData::get_url().$uri, $post, $post_data);
 if(!$response_array = json_decode($json_response, true)){
     error_log(ProcessData::$error_title.$json_response);
 } else {
@@ -72,5 +70,6 @@ if(!$response_array = json_decode($json_response, true)){
         echo $response;
     } else {
         error_log(ProcessData::$error_title.$response_array['error']);
+        // TODO - do something that causes AJAX to recognise this as an error
     }
 }

@@ -112,4 +112,16 @@ class ProcessData {
     public static function decode($data){
         return base64_decode($data);
     }
+    
+    private static function get_env(){
+        return getenv('environment');
+    }
+    
+    public static function get_url(){
+        if(self::get_env() == 'live'){
+            return 'https://services.jdenoc.com/api/money_tracker/';
+        } else {
+            return 'http://services.local/api/money_tracker/';
+        }
+    }
 }
