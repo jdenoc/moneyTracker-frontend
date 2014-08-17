@@ -25,7 +25,7 @@ class ProcessData {
         $result = curl_exec($ch);
 
         if (curl_errno($ch)) {
-            error_log(self::$error_title." services connection issue-".curl_error($ch));
+            error_log(self::$error_title." services connection issue\nURL:".$url."\n".curl_error($ch));
         }
         curl_close($ch);
         return $result;

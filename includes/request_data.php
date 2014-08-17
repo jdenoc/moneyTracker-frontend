@@ -61,16 +61,16 @@ switch($_REQUEST['type']){
         $callback = 'do_nothing';
 }
 
-$api_url = 'http://services.local/index.php/api/money_tracker/';
+$api_url = 'http://services.local/api/money_tracker/';
 $json_response = ProcessData::make_call($api_url.$uri, $post, $post_data);
 
 if(!$response_array = json_decode($json_response, true)){
-    error_log(ProcessData::$error_title.$json_response);
+    error_log(ProcessData::$error_title."failed JSON response\n".$json_response);
 } else {
     if(empty($response_array['error'])){
         $response = call_user_func(array('ProcessData', $callback), $response_array['result']);
         echo $response;
     } else {
-        error_log(ProcessData::$error_title.$response_array['error']);
+        error_log(ProcessData::$error_title."response error\n".$response_array['error']);
     }
 }
