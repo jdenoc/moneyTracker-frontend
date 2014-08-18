@@ -12,7 +12,7 @@ switch($_REQUEST['type']){
     case 'count':
         $uri = 'count';
         $post = true;
-        $post_data = array('where'=>ProcessData::clean_input('where'));
+        $post_data = array('where'=>base64_encode(ProcessData::clean_input('where')));
         $callback = 'do_nothing';
         break;
 
@@ -40,7 +40,11 @@ switch($_REQUEST['type']){
         $uri = 'list';
         $post = true;
         $limit = empty($_POST['limit']) ? 50 : $_POST['limit'];
-        $post_data = array('start'=>intval(ProcessData::clean_input('start')), 'limit'=>$limit, 'where'=>ProcessData::clean_input('where'));
+        $post_data = array(
+            'start'=>intval(ProcessData::clean_input('start')),
+            'limit'=>$limit,
+            'where'=>base64_encode(ProcessData::clean_input('where'))
+        );
         $callback = 'list_entries';
         break;
 
@@ -52,7 +56,9 @@ switch($_REQUEST['type']){
     case 'save':
         $uri = 'save';
         $post = true;
-        $post_data = array('data'=>ProcessData::clean_input('entry_data'));
+        $data = json_decode(ProcessData::clean_input('entry_data'), true);
+        $data['has_attachment'] = ProcessData::upload_attachment($data['attachments']);
+        $post_data = array('data'=>base64_encode(json_encode($data)));
         $callback = 'do_nothing';
         break;
 
@@ -62,14 +68,15 @@ switch($_REQUEST['type']){
 }
 
 $json_response = ProcessData::make_call(ProcessData::get_url().$uri, $post, $post_data);
+
 if(!$response_array = json_decode($json_response, true)){
-    error_log(ProcessData::$error_title.$json_response);
+    error_log(ProcessData::$error_title."failed JSON response\n".$json_response);
 } else {
     if(empty($response_array['error'])){
         $response = call_user_func(array('ProcessData', $callback), $response_array['result']);
         echo $response;
     } else {
-        error_log(ProcessData::$error_title.$response_array['error']);
+        error_log(ProcessData::$error_title."response error\n".$response_array['error']);
         // TODO - do something that causes AJAX to recognise this as an error
     }
 }

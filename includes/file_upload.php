@@ -1,9 +1,6 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: denis
- * Date: 3/7/14
- * Time: 12:00 AM
+ * Used to handle initial file uploads, so we don't loose the file after the upload session is complete.
  */
 
 $tmp_dir = __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR;
