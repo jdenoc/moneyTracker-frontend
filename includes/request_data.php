@@ -12,7 +12,7 @@ switch($_REQUEST['type']){
     case 'count':
         $uri = 'count';
         $post = true;
-        $post_data = array('where'=>ProcessData::clean_input('where'));
+        $post_data = array('where'=>base64_encode(ProcessData::clean_input('where')));
         $callback = 'do_nothing';
         break;
 
@@ -40,7 +40,11 @@ switch($_REQUEST['type']){
         $uri = 'list';
         $post = true;
         $limit = empty($_POST['limit']) ? 50 : $_POST['limit'];
-        $post_data = array('start'=>intval(ProcessData::clean_input('start')), 'limit'=>$limit, 'where'=>ProcessData::clean_input('where'));
+        $post_data = array(
+            'start'=>intval(ProcessData::clean_input('start')),
+            'limit'=>$limit,
+            'where'=>base64_encode(ProcessData::clean_input('where'))
+        );
         $callback = 'list_entries';
         break;
 
@@ -52,7 +56,9 @@ switch($_REQUEST['type']){
     case 'save':
         $uri = 'save';
         $post = true;
-        $post_data = array('data'=>ProcessData::clean_input('entry_data'));
+        $data = json_decode(ProcessData::clean_input('entry_data'), true);
+        $data['has_attachment'] = ProcessData::upload_attachment($data['attachments']);
+        $post_data = array('data'=>base64_encode(json_encode($data)));
         $callback = 'do_nothing';
         break;
 
