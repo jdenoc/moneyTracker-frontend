@@ -25,7 +25,7 @@ class ProcessData {
         $result = curl_exec($ch);
 
         if (curl_errno($ch)) {
-            error_log(self::$error_title." services connection issue\nURL:".$url."\n".curl_error($ch));
+            error_log(self::$error_title."services connection issue\nURL:".$url."\n".curl_error($ch));
         }
         curl_close($ch);
         return $result;
@@ -36,7 +36,6 @@ class ProcessData {
     }
 
     public static function list_accounts($data){
-        // TODO - test
         $accounts = self::base_process($data);
         $display = '';
         $account_position = 3;
@@ -90,7 +89,7 @@ class ProcessData {
     }
 
     private static function base_process($data){
-        return json_decode(base64_decode($data), true);
+        return json_decode(self::decode($data), true);
     }
 
     public static function do_nothing($data){
@@ -111,5 +110,22 @@ class ProcessData {
 
     public static function decode($data){
         return base64_decode($data);
+    }
+
+    public static function upload_attachment($attachments){
+        // Attachment uploader
+        $md5 = include_once(__DIR__ . '/../config/config.md5.php');
+        $output_dir = __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."receipts_attachments".DIRECTORY_SEPARATOR;
+        $tmp_dir = __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR;
+        $has_attachment = 0;
+        if(!empty($attachments)){
+            foreach($attachments as $attachment){
+                $has_attachment = 1;
+                $pos = strrpos($attachment, '.');
+                $ext = substr($attachment, $pos);
+                rename($tmp_dir.$attachment,$output_dir.md5($attachment.$md5).$ext);
+            }
+        }
+        return $has_attachment;
     }
 }
