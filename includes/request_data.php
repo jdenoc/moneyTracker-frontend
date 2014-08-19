@@ -62,6 +62,11 @@ switch($_REQUEST['type']){
         $callback = 'do_nothing';
         break;
 
+    case 'get_account_data':
+        $uri = 'account_details';
+        $callback = 'display_account_settings';
+        break;
+
     default:
         $uri = '';
         $callback = 'do_nothing';

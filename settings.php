@@ -4,7 +4,7 @@
  * Date: 2014-05-10
  */
 
-$session_title = include_once(__DIR__ . '/includes/config.session.php');
+$session_title = include_once(__DIR__.'/config/config.session.php');
 session_name($session_title);
 session_start();
 if(empty($_SESSION['email'])){
@@ -31,9 +31,12 @@ if(empty($_SESSION['email'])){
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="Lib/js/loading.js"></script>
+    <script type="text/javascript" src="Lib/js/misc.js"></script>
+    <script type="text/javascript" src="js/settings.js"></script>
 
     <link href="css/switch.css" rel="stylesheet" type="text/css" />
-    <link href="css/loading.css" rel="stylesheet" type="text/css" />
+    <link href="Lib/css/loading.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 
@@ -67,20 +70,9 @@ if(empty($_SESSION['email'])){
 
 <!-- Main body -->
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
 <!--            TODO - create proper headings -->
-<!--            <ul id="account_display" class="nav nav-sidebar">-->
-<!--                <li><h4>Accounts</h4></li>-->
-<!--                <li class="active" onclick="resetFilter();displayAccount([],2)"><a href="#">Overview <span class="is_filtered">(filtered)</span></a></li>-->
-<!--            </ul>-->
-        </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-
-
-
-        </div>
-    </div>
+    <h1>Account Setting</h1>
+    <div id="accounts"></div>
 </div>
 <!-- END - Main body -->
 

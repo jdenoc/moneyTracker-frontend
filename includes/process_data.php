@@ -113,7 +113,7 @@ class ProcessData {
     }
     
     private static function get_env(){
-        return getenv('environment');
+        return getenv('ENV_TYPE');
     }
     
     public static function get_url(){
@@ -139,5 +139,18 @@ class ProcessData {
             }
         }
         return $has_attachment;
+    }
+
+    public static function display_account_settings($data){
+        // TODO - make this code A LOT nicer.
+        $account_data = self::base_process($data);
+        $display = '';
+        foreach($account_data as $id=>$account){
+            $display .= '<h2 id="account_'.$id.'">'.$account['account_name'].'</h2>'."\r\n";
+            foreach($account['type'] as $type){
+                $display .= '<h4 id="type_'.$type['type_id'].'">'.$type['type_name'].' - '.$type['last_digits'].'</h4>'."\r\n";
+            }
+        }
+        return $display;
     }
 }
