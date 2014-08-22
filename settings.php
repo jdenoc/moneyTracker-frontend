@@ -35,7 +35,6 @@ if(empty($_SESSION['email'])){
     <script type="text/javascript" src="Lib/js/misc.js"></script>
     <script type="text/javascript" src="js/settings.js"></script>
 
-    <link href="css/switch.css" rel="stylesheet" type="text/css" />
     <link href="Lib/css/loading.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -70,9 +69,14 @@ if(empty($_SESSION['email'])){
 
 <!-- Main body -->
 <div class="container-fluid">
-<!--            TODO - create proper headings -->
     <h1>Account Setting</h1>
-    <div id="accounts"></div>
+    <div class="row">
+        <div class="col-md-12 main">
+            <div class="table-responsive">
+                <table id="account_settings" class="table table-striped table-hover table-condensed"></table>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- END - Main body -->
 
