@@ -142,14 +142,28 @@ class ProcessData {
     }
 
     public static function display_account_settings($data){
-        // TODO - make this code A LOT nicer.
         $account_data = self::base_process($data);
+        $type_options = '';
+        foreach($account_data['types'] as $type){
+            $type_options .= '<option value="'.$type.'">'.ucfirst($type).'</option>'."\r\n";
+        }
+        unset($account_data['types'], $type);
         $display = '';
         foreach($account_data as $id=>$account){
-            $display .= '<h2 id="account_'.$id.'">'.$account['account_name'].'</h2>'."\r\n";
+            $display .= '<tr id="account_setting_'.$id.'" class="account_setting"><td><h3>'.$account['account_name']."</h3><ul>\r\n";
             foreach($account['type'] as $type){
-                $display .= '<h4 id="type_'.$type['type_id'].'">'.$type['type_name'].' - '.$type['last_digits'].'</h4>'."\r\n";
+                $display .= '<li id="type_'.$type['type_id'].'" class="account_type">';
+                $display .= '<label>Name:<input type="text" name="type_name" class="form-control" value="'.$type['type_name'].'" readonly/></label>';
+                $display .= '<label>Last Digits:<input type="text" name="last_digits" class="form-control" value="'.$type['last_digits'].'" readonly/></label>';
+                $display .= '<label>Type: <select name="type" class="form-control" disabled>'.$type_options.'</select></label>';
+                $display .= '<input type="hidden" value="'.$type['type'].'"/><div>';
+                $display .= '<button type="button" class="btn btn-default type_button edit_type">Edit</button>';
+                $display .= '<button type="button" class="btn btn-default type_button save_type">Save</button>';
+                $display .= '<button type="button" class="btn btn-default type_button disable_type">Disable</button>';
+                $display .= "</div></li>\r\n";
             }
+            $display .= "<li class='account_type add_type btn'>Add Account Type</li>\r\n";
+            $display .= "</ul></td></tr>\r\n";
         }
         return $display;
     }
