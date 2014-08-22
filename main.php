@@ -10,10 +10,9 @@ if(empty($_SESSION['email'])){
     header('Location: logout.php');
     exit;
 }
-// TODO - add/edit account
-// TODO -   fields: account, account_type(credit card, debit card, cheque, etc.), last_digits,
+
 require_once(__DIR__.'/Lib/php/PDO_Connection.php');
-$db = new PDO_Connection('jdenocco_receipt', __DIR__.'/config/config.db.php');        // TODO - change DB name to money_tracker
+$db = new PDO_Connection('jdenoc_money_tracker', __DIR__.'/config/config.db.php');
 $account_types = $db->getAllRows("SELECT * FROM account_types");
 $account_type_options = '';
 foreach($account_types as $at){
