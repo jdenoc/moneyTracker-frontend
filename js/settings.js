@@ -43,6 +43,10 @@ var accounts = {
             var typeData = accounts.types.initHandler($(this)[0]);
             var element = "#"+typeData.accountID+" ul .account_type";
             if($(element).is(':visible')){
+                $(element+' label input').prop('readonly', true);
+                $(element+' label select').prop('disabled', true);
+                $(element+' .save_type').hide();
+                $(element+' .edit_type').show();
                 $(element).slideUp();
             } else {
                 $(element).slideDown();
