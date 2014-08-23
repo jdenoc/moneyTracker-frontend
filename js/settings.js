@@ -5,7 +5,6 @@
 var url='../includes/request_data.php?x=';
 
 var accounts = {
-    url: {},
     display: function(){
         $.ajax({
             type: 'POST',
@@ -17,6 +16,7 @@ var accounts = {
                 $('.account_setting h3').bind('click', accounts.types.display);
                 $('.add_type').bind('click', accounts.types.save);
                 $('.save_type').bind('click', accounts.types.save);
+                $('.cancel_type').bind('click', accounts.types.cancel);
                 $('.edit_type').bind('click', accounts.types.edit);
                 $('.disable_type').bind('click', accounts.types.disable);
                 $('.account_type').each(function(idx, obj){
@@ -39,21 +39,24 @@ var accounts = {
         alert('this doesn\'t work yet.');
     },
     types: {
+        tempData:{},
         display: function(){
             var typeData = accounts.types.initHandler($(this)[0]);
             var element = "#"+typeData.accountID+" ul .account_type";
             if($(element).is(':visible')){
+                $(element).slideUp();
                 $(element+' label input').prop('readonly', true);
                 $(element+' label select').prop('disabled', true);
                 $(element+' .save_type').hide();
+                $(element+' .cancel_type').hide();
                 $(element+' .edit_type').show();
-                $(element).slideUp();
             } else {
                 $(element).slideDown();
             }
         },
         add: function(){
             // TODO - this will open a model
+            alert('this doesn\'t work yet.');
         },
         edit: function(){
             var typeData = accounts.types.initHandler($(this)[0]);
@@ -62,6 +65,21 @@ var accounts = {
             $(element+' label select').prop('disabled', false);
             $(element+' .edit_type').hide();
             $(element+' .save_type').show();
+            $(element+' .cancel_type').show();
+        },
+        cancel: function(){
+            var typeData = accounts.types.initHandler($(this)[0]);
+            if(typeof typeData.typeID == 'undefined'){
+                // TODO - remove section. This is a "potential" added type.
+                $(this).remove();   // TODO - Let's see if this actually works.
+            } else {
+                var element = "#"+typeData.typeID;
+                $(element+' label input').prop('readonly', true);
+                $(element+' label select').prop('disabled', true);
+                $(element+' .save_type').hide();
+                $(element+' .cancel_type').hide();
+                $(element+' .edit_type').show();
+            }
         },
         save: function(){
             // TODO - add/update account type

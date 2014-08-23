@@ -159,6 +159,7 @@ class ProcessData {
                 $display .= '<input type="hidden" value="'.$type['type'].'"/><div>';
                 $display .= '<button type="button" class="btn btn-default type_button edit_type">Edit</button>';
                 $display .= '<button type="button" class="btn btn-default type_button save_type">Save</button>';
+                $display .= '<button type="button" class="btn btn-default type_button cancel_type">Cancel</button>';
                 $display .= '<button type="button" class="btn btn-default type_button disable_type">Disable</button>';
                 $display .= "</div></li>\r\n";
             }
