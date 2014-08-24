@@ -66,7 +66,10 @@ var editDisplay = {
                 type: 'entry',
                 id : entry_id
             },
-            beforeSend: function(){},
+            beforeSend: function(){
+                notice.remove();
+                loading.start()
+            },
             success:function(data){
                 // successful request
                 var tags='', editData = JSON.parse(data);
@@ -105,9 +108,11 @@ var editDisplay = {
                 } else {
                     entry.save();
                 }
+                loading.end();
             },
             error:function(){
-                // TODO - display error message
+                notice.display('danger', 'Could not retrieve entry data');
+                loading.end();
             }
         });
     }
@@ -127,7 +132,7 @@ function fillTable(all){
             paging.totalElements = parseInt(data);
         },
         error:function(){
-            // TODO - display error message
+            // Do nothing. User doesn't need to know about this.
         }
     });
 
@@ -140,14 +145,17 @@ function fillTable(all){
             limit : paging.limit,
             where: JSON.stringify(entry.where)
         },
-        beforeSend:function(){},
+        beforeSend:function(){
+            notice.remove();
+        },
         success:function(entryData){
             // successful request
             $('table').append(entryData);
             loading.end();
         },
         error:function(){
-            // TODO - display error message
+            notice.display('danger', 'Could not retrieve data');
+            loading.end();
         }
     });
 
@@ -165,7 +173,7 @@ function fillTable(all){
                 }
             },
             error:function(){
-                // TODO - display error message
+                notice.display('danger', 'Could not accounts');
             }
         });
     }
@@ -209,7 +217,7 @@ function getValidTags(){
                 .tooltip();
         },
         error:function(){
-            // TODO - display error message
+            // Do nothing. User doesn't need to know about this.
         }
     });
 }
@@ -239,7 +247,10 @@ var entry = {
                 type: 'save',
                 entry_data : $('#entry_data').val()
             },
-            beforeSend:function(){},
+            beforeSend:function(){
+                notice.remove();
+                loading.start();
+            },
             success:function(data){
                 // successful request
                 if(parseInt(data) == 1){
@@ -248,7 +259,8 @@ var entry = {
                 }
             },
             error:function(){
-                // TODO - display error message
+                notice.display('danger', 'Could not save entry');
+                loading.end();
             }
         });
     },
@@ -262,14 +274,16 @@ var entry = {
                     type: 'delete_entry',
                     id : entryId
                 },
-                beforeSend:function(){},
+                beforeSend:function(){
+                    notice.remove();
+                },
                 success:function(data){
                     if(parseInt(data) == 1){
                         refreshTable(true);
                     }
                 },
                 error:function(){
-                    // TODO - display error message
+                    notice.display('danger', 'Could not delete entry');
                 }
             });
         }
@@ -357,13 +371,15 @@ var attachments = {
                     entry_id : entryId,
                     id: attachment_id
                 },
-                beforeSend:function(){},
+                beforeSend:function(){
+                    notice.remove();
+                },
                 success:function(data){
                     $('#attachment_'+attachment_id).remove();
                     $('#entry_has_attachment').val( parseInt(data) );
                 },
                 error:function(){
-                    // TODO - display error message
+                    notice.display('danger', 'Could not delete attachment');
                 }
             });
         }
@@ -382,6 +398,23 @@ var attachments = {
     }
 };
 
+var notice = {
+    display: function(alertType, alertText){
+        var validAlertTypes = ['info', 'warning', 'success', 'danger'];
+        var alertToDisplay = '';
+        if($.inArray(alertType, validAlertTypes) > -1){
+            alertToDisplay += '<div class="alert alert-'+alertType+' alert-dismissable" role="alert">';
+            alertToDisplay += '     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>';
+            alertToDisplay += '     '+alertText;
+            alertToDisplay += '</div>';
+        }
+        $('.row').before(alertToDisplay);
+    },
+    remove: function(){
+        $('.alert').remove();
+    }
+};
+
 $(function(){
     loading.img = 'imgs/loader.gif';
     loading.start();
@@ -392,6 +425,7 @@ $(function(){
     fillTable(true);
     editDisplay.reset();
     filter.reset();
+    paging.reset();
 
     paging.nextObj.val(paging.current+1).click(function(){
         paging.next();
