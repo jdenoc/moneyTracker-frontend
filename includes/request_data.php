@@ -76,8 +76,7 @@ $json_response = ProcessData::make_call(ProcessData::get_url().$uri, $post, $pos
 
 if(!$response_array = json_decode($json_response, true)){
     error_log(ProcessData::$error_title."failed JSON response\n".$json_response);
-    // TODO - do something that causes AJAX to recognise this as an error
-    header("HTTP/1.1 500 Internal Server Error");           // TODO - test to see if AJAX recognises this as an error
+    header("HTTP/1.1 500 Internal Server Error");
     exit;
 } else {
     if(empty($response_array['error'])){
@@ -85,8 +84,7 @@ if(!$response_array = json_decode($json_response, true)){
         echo $response;
     } else {
         error_log(ProcessData::$error_title."response error\n".$response_array['error']);
-        // TODO - do something that causes AJAX to recognise this as an error
-        header("HTTP/1.1 500 Internal Server Error");       // TODO - test to see if AJAX recognises this as an error
+        header("HTTP/1.1 500 Internal Server Error");
         exit;
     }
 }
