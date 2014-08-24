@@ -50,7 +50,7 @@ class ProcessData {
         $entries = self::base_process($data);
         $display = '';
 
-        $json_response = self::make_call('tags');
+        $json_response = self::make_call(self::get_url().'tags');
         if(!$tags_data = json_decode($json_response, true)){
             error_log(self::$error_title.$json_response);
             $tags = array();
