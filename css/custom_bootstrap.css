@@ -21,9 +21,6 @@
     border: inset 1px;
     padding: 1px 5px 2px 2px;
 }
-.check-col {
-
-}
 .memo-col{
     text-align: center;
     width: 70px;
@@ -225,6 +222,9 @@
     margin: 0 25px 0 5px;
 }
 /* END - Filter */
+.alert{
+    text-align: center;
+}
 .tooltip-inner{
     max-width: inherit;
 }
@@ -301,6 +301,7 @@
     text-align: center;
     margin: 5px 10px;
 }
+.cancel_type,
 .save_type{
     display: none;
 }
