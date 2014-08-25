@@ -276,6 +276,7 @@ var entry = {
                 },
                 beforeSend:function(){
                     notice.remove();
+                    loading.start();
                 },
                 success:function(data){
                     if(parseInt(data) == 1){
@@ -284,6 +285,7 @@ var entry = {
                 },
                 error:function(){
                     notice.display('danger', 'Could not delete entry');
+                    loading.end();
                 }
             });
         }
