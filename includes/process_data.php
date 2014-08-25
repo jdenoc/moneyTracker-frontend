@@ -143,20 +143,19 @@ class ProcessData {
 
     public static function display_account_settings($data){
         $account_data = self::base_process($data);
-        $type_options = '';
-        foreach($account_data['types'] as $type){
-            $type_options .= '<option value="'.$type.'">'.ucfirst($type).'</option>'."\r\n";
-        }
-        unset($account_data['types'], $type);
+        $type_options = $account_data['types'];
+        unset($account_data['types']);
+        
         $display = '';
+        $types = array();
         foreach($account_data as $id=>$account){
             $display .= '<tr id="account_setting_'.$id.'" class="account_setting"><td><h3>'.$account['account_name']."</h3><ul>\r\n";
             foreach($account['type'] as $type){
+                $types[$id][$type['type_id']] = $type['type'];
                 $display .= '<li id="type_'.$type['type_id'].'" class="account_type">';
                 $display .= '<label>Name:<input type="text" name="type_name" class="form-control" value="'.$type['type_name'].'" readonly/></label>';
                 $display .= '<label>Last Digits:<input type="text" name="last_digits" class="form-control" value="'.$type['last_digits'].'" readonly/></label>';
-                $display .= '<label>Type: <select name="type" class="form-control" disabled>'.$type_options.'</select></label>';
-                $display .= '<input type="hidden" value="'.$type['type'].'"/><div>';
+                $display .= '<label>Type: <select name="type" class="form-control" disabled></select></label>';
                 $display .= '<button type="button" class="btn btn-default type_button edit_type">Edit</button>';
                 $display .= '<button type="button" class="btn btn-default type_button save_type">Save</button>';
                 $display .= '<button type="button" class="btn btn-default type_button cancel_type">Cancel</button>';
@@ -165,6 +164,10 @@ class ProcessData {
             }
             $display .= "<li class='account_type add_type btn'>Add Account Type</li>\r\n";
             $display .= "</ul></td></tr>\r\n";
+            $display .= "<script type='text/javascript'>\r\n";
+            $display .= "\tvar typeOptions = ".json_encode($type_options).";\r\n";
+            $display .= "\tvar types = ".json_encode($types).";\r\n";
+            $display .= "</script>";
         }
         return $display;
     }

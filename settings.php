@@ -11,8 +11,6 @@ if(empty($_SESSION['email'])){
     header('Location: logout.php');
     exit;
 }
-
-// TODO - Complete settings page
 ?>
 
 <!DOCTYPE html>
