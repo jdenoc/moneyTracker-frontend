@@ -15,7 +15,7 @@ class ProcessData {
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Authorization:'.self::get_auth()
         ));
-        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 7);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
         curl_setopt($ch, CURLOPT_POST, $post);
