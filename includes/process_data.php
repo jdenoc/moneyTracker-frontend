@@ -164,11 +164,11 @@ class ProcessData {
             }
             $display .= "<li class='account_type add_type btn'>Add Account Type</li>\r\n";
             $display .= "</ul></td></tr>\r\n";
-            $display .= "<script type='text/javascript'>\r\n";
-            $display .= "\tvar typeOptions = ".json_encode($type_options).";\r\n";
-            $display .= "\tvar types = ".json_encode($types).";\r\n";
-            $display .= "</script>";
         }
+        $display .= "<script type='text/javascript'>\r\n";
+        $display .= "\tvar typeOptions = ".json_encode($type_options).";\r\n";
+        $display .= "\tvar types = ".json_encode($types).";\r\n";
+        $display .= "</script>";
         return $display;
     }
 }
