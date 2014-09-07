@@ -114,20 +114,20 @@ var accounts = {
             var typeData = accounts.types.initHandler($(this)[0]);
             if(typeData.typeID == ''){
                 // we're adding a new account type here
-                accounts.types.tempData.name = $('#'+typeData.accountID+' ul li:last-child() input[name="type_name"]').val();
-                accounts.types.tempData.last_digits = parseInt( $('#'+typeData.accountID+' ul li:last-child() input[name="last_digits"]').val() );
+                accounts.types.tempData.type_name = $('#'+typeData.accountID+' ul li:last-child() input[name="type_name"]').val();
+                accounts.types.tempData.last_digits = $('#'+typeData.accountID+' ul li:last-child() input[name="last_digits"]').val();
                 accounts.types.tempData.type = $('#'+typeData.accountID+' ul li:last-child() select').val();
                 accounts.types.tempData.accountID = typeData.accountID.replace('account_setting_', '');
             } else {
                 // we're going to update an existing account type
                 accounts.types.tempData.id = typeData.typeID.replace('type_', '');
-                accounts.types.tempData.name = $('#'+typeData.typeID+' input[name="type_name"]').val();
-                accounts.types.tempData.last_digits = parseInt( $('#'+typeData.typeID+' input[name="last_digits"]').val() );
+                accounts.types.tempData.type_name = $('#'+typeData.typeID+' input[name="type_name"]').val();
+                accounts.types.tempData.last_digits = $('#'+typeData.typeID+' input[name="last_digits"]').val();
                 accounts.types.tempData.type = $('#'+typeData.typeID+' select').val();
                 accounts.types.tempData.accountID = typeData.accountID.replace('account_setting_', '');
             }
             
-            if(accounts.types.tempData.name=='' || accounts.types.tempData.last_digits=='' || accounts.types.tempData.type==''){
+            if(accounts.types.tempData.type_name=='' || accounts.types.tempData.last_digits=='' || accounts.types.tempData.type==''){
                 alert('Can\'t save. Missing information.');
             } else {
                 $.ajax({
@@ -143,7 +143,6 @@ var accounts = {
                     success:function(data){
                         accounts.types.tempData = {};
                         accounts.display();
-                        loading.end();
                     },
                     error:function(){
                         // TODO - display error message
