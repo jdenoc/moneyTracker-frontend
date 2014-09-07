@@ -111,30 +111,31 @@ var accounts = {
             }
         },
         save: function(){
-            // TODO - add/update account type
-            alert('Account Type Save doesn\'t work yet.');
             var typeData = accounts.types.initHandler($(this)[0]);
             if(typeData.typeID == ''){
                 // we're adding a new account type here
-                accounts.types.tempData.type_name = $('#'+typeData.accountID+' ul li:last-child() input[name="type_name"]').val();
+                accounts.types.tempData.name = $('#'+typeData.accountID+' ul li:last-child() input[name="type_name"]').val();
                 accounts.types.tempData.last_digits = parseInt( $('#'+typeData.accountID+' ul li:last-child() input[name="last_digits"]').val() );
                 accounts.types.tempData.type = $('#'+typeData.accountID+' ul li:last-child() select').val();
+                accounts.types.tempData.accountID = typeData.accountID.replace('account_setting_', '');
             } else {
                 // we're going to update an existing account type
-                accounts.types.tempData.type_name = $('#'+typeData.typeID+' input[name="type_name"]').val();
+                accounts.types.tempData.id = typeData.typeID.replace('type_', '');
+                accounts.types.tempData.name = $('#'+typeData.typeID+' input[name="type_name"]').val();
                 accounts.types.tempData.last_digits = parseInt( $('#'+typeData.typeID+' input[name="last_digits"]').val() );
                 accounts.types.tempData.type = $('#'+typeData.typeID+' select').val();
+                accounts.types.tempData.accountID = typeData.accountID.replace('account_setting_', '');
             }
             
-            if(accounts.types.tempData.type_name=='' || accounts.types.tempData.last_digits=='' || accounts.types.tempData.type==''){
+            if(accounts.types.tempData.name=='' || accounts.types.tempData.last_digits=='' || accounts.types.tempData.type==''){
                 alert('Can\'t save. Missing information.');
             } else {
                 $.ajax({
                     type: 'POST',
                     url: url+nocache(),
                     data: {
-                        type: 'save_account_type_data',
-                        data: accounts.types.tempData
+                        type: 'save_account_type',
+                        type_data: accounts.types.tempData
                     },
                     beforeSend:function(){
                         loading.start();
@@ -146,6 +147,7 @@ var accounts = {
                     },
                     error:function(){
                         // TODO - display error message
+                        accounts.types.tempData = {};
                         loading.end();
                     }
                 });
@@ -165,6 +167,14 @@ var accounts = {
     }
 };
 
+function digitsOnly(){
+    var last_digits = parseInt($(this).val());
+    if(!isNaN(last_digits)){
+        $(this).val( last_digits );
+    } else {
+        $(this).val('');
+    }
+}
 
 $(function(){
     loading.img = 'imgs/loader.gif';
@@ -177,4 +187,5 @@ $(function(){
     accountSettings.delegate('.edit_type', 'click', accounts.types.edit);
     accountSettings.delegate('.disable_type', 'click', accounts.types.disable);
     accountSettings.delegate('h3', 'click', accounts.types.display);
+    accountSettings.delegate('input[name="last_digits"]', 'input', digitsOnly);
 });
