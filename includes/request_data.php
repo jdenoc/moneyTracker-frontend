@@ -67,6 +67,13 @@ switch($_REQUEST['type']){
         $callback = 'display_account_settings';
         break;
 
+    case 'save_account_type':
+        $uri = 'save_account_type';
+        $post = true;
+        $data = json_encode(ProcessData::clean_input('type_data'));
+        $post_data = array('data'=>base64_encode($data));
+        $callback = 'do_nothing';
+        break;
     default:
         $uri = '';
         $callback = 'do_nothing';
@@ -84,7 +91,7 @@ if(!$response_array = json_decode($json_response, true)){
         echo $response;
     } else {
         error_log(ProcessData::$error_title."response error\n".$response_array['error']);
-        header("HTTP/1.1 500 Internal Server Error");
+        header("HTTP/1.1 400 Bad Request");
         exit;
     }
 }
