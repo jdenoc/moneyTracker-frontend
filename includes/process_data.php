@@ -154,7 +154,7 @@ class ProcessData {
                 $types[$id][$type['type_id']] = $type['type'];
                 $display .= '<li id="type_'.$type['type_id'].'" class="account_type">';
                 $display .= '<label>Name:<input type="text" name="type_name" class="form-control" value="'.$type['type_name'].'" readonly/></label>';
-                $display .= '<label>Last Digits:<input type="text" name="last_digits" class="form-control" value="'.$type['last_digits'].'" readonly/></label>';
+                $display .= '<label>Last Digits:<input type="text" name="last_digits" class="form-control" value="'.$type['last_digits'].'"  maxlength="4" readonly/></label>';
                 $display .= '<label>Type: <select name="type" class="form-control" disabled></select></label>';
                 $display .= '<button type="button" class="btn btn-default type_button edit_type">Edit</button>';
                 $display .= '<button type="button" class="btn btn-default type_button save_type">Save</button>';

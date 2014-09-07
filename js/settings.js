@@ -10,7 +10,9 @@ var accounts = {
             type: 'POST',
             url: url+nocache(),
             data: { type: 'get_account_data' },
-            beforeSend:function(){},
+            beforeSend:function(){
+                $('#account_settings tr').remove();
+            },
             success:function(accountData){
                 $('#account_settings').append(accountData);
                 $('.account_type').each(function(idx, obj){
@@ -35,11 +37,11 @@ var accounts = {
     },
     add: function(){
         // TODO - create a new account
-        alert('this doesn\'t work yet.');
+        alert('Account Add doesn\'t work yet.');
     },
     disable: function(){
         // TODO - disable account
-        alert('this doesn\'t work yet.');
+        alert('Account Disable doesn\'t work yet.');
     },
     types: {
         tempData:{},
@@ -70,17 +72,15 @@ var accounts = {
                 selectOptions += '<option value="'+typeObj+'">'+typeObj.substring(0,1).toUpperCase()+typeObj.substring(1)+'</option>'+"\n";
             });
             var display = '<li class="account_type">';
-            display += '    <label>Name:<input type="text" name="type_name" class="form-control" /></label>';
-            display += '    <label>Last Digits:<input type="text" name="last_digits" class="form-control" /></label>';
-            display += '    <label>Type: <select name="type" class="form-control" >'+selectOptions+'</select></label>';
-            display += '    <button type="button" class="btn btn-default type_button save_type">Save</button>';
-            display += '    <button type="button" class="btn btn-default type_button cancel_type">Cancel</button>';
+            display += "\t"+'<label>Name:<input type="text" name="type_name" class="form-control" /></label>';
+            display += "\t"+'<label>Last Digits:<input type="text" name="last_digits" class="form-control" maxlength="4" /></label>';
+            display += "\t"+'<label>Type: <select name="type" class="form-control" >'+selectOptions+'</select></label>';
+            display += "\t"+'<button type="button" class="btn btn-default type_button save_type">Save</button>';
+            display += "\t"+'<button type="button" class="btn btn-default type_button cancel_type">Cancel</button>';
             display += "</div></li>"+"\n";
             $('#'+typeData.accountID+' ul').append(display);
             var element = "#"+typeData.accountID+" ul li:last-child";
             $(element).show();
-            $(element+' label input').prop('readonly', false);
-            $(element+' label select').prop('disabled', false);
             $(element+' .save_type').show();
             $(element+' .cancel_type').show();
 
@@ -112,27 +112,49 @@ var accounts = {
         },
         save: function(){
             // TODO - add/update account type
-            alert('this doesn\'t work yet.');
+            alert('Account Type Save doesn\'t work yet.');
             var typeData = accounts.types.initHandler($(this)[0]);
             if(typeData.typeID == ''){
-                // TODO - we're adding a new account type here
+                // we're adding a new account type here
                 accounts.types.tempData.type_name = $('#'+typeData.accountID+' ul li:last-child() input[name="type_name"]').val();
-                accounts.types.tempData.last_digits = $('#'+typeData.accountID+' ul li:last-child() input[name="last_digits"]').val();
+                accounts.types.tempData.last_digits = parseInt( $('#'+typeData.accountID+' ul li:last-child() input[name="last_digits"]').val() );
                 accounts.types.tempData.type = $('#'+typeData.accountID+' ul li:last-child() select').val();
             } else {
-                // TODO - we're going to update an existing account type
+                // we're going to update an existing account type
                 accounts.types.tempData.type_name = $('#'+typeData.typeID+' input[name="type_name"]').val();
-                accounts.types.tempData.last_digits = $('#'+typeData.typeID+' input[name="last_digits"]').val();
+                accounts.types.tempData.last_digits = parseInt( $('#'+typeData.typeID+' input[name="last_digits"]').val() );
                 accounts.types.tempData.type = $('#'+typeData.typeID+' select').val();
             }
-            // TODO - check if there are any empty values. If so, then don't actually save anything.
-            // TODO - Write ajax to save account type
-            // TODO - refresh page
+            
+            if(accounts.types.tempData.type_name=='' || accounts.types.tempData.last_digits=='' || accounts.types.tempData.type==''){
+                alert('Can\'t save. Missing information.');
+            } else {
+                $.ajax({
+                    type: 'POST',
+                    url: url+nocache(),
+                    data: {
+                        type: 'save_account_type_data',
+                        data: accounts.types.tempData
+                    },
+                    beforeSend:function(){
+                        loading.start();
+                    },
+                    success:function(data){
+                        accounts.types.tempData = {};
+                        accounts.display();
+                        loading.end();
+                    },
+                    error:function(){
+                        // TODO - display error message
+                        loading.end();
+                    }
+                });
+            }
         },
         disable: function(){
             // TODO - disable account type
             var typeData = accounts.types.initHandler($(this)[0]);
-            alert('this doesn\'t work yet.');
+            alert('Account Type Disable doesn\'t work yet.');
         },
         initHandler: function(element){
             var accountTypeData = {};
