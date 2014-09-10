@@ -30,7 +30,8 @@ var accounts = {
                 loading.end();
             },
             error:function(){
-                // TODO - display error message
+                // TODO - test
+                notice.display('danger', 'Error occurred while trying to display information on accounts.');
                 loading.end();
             }
         });
@@ -38,10 +39,11 @@ var accounts = {
     add: function(){
         // TODO - create a new account
         alert('Account Add doesn\'t work yet.');
+        notice.display('warning', 'Feature: "Adding new Account", will be coming soon.')
     },
     disable: function(){
         // TODO - disable account
-        alert('Account Disable doesn\'t work yet.');
+        notice.display('warning', 'Feature: "Disabling Account", will be coming soon.')
     },
     types: {
         tempData:{},
@@ -128,7 +130,8 @@ var accounts = {
             }
             
             if(accounts.types.tempData.type_name=='' || accounts.types.tempData.last_digits=='' || accounts.types.tempData.type==''){
-                alert('Can\'t save. Missing information.');
+                // TODO - TEST
+                notice.display('warning', 'Could not save account type. Missing data');
             } else {
                 $.ajax({
                     type: 'POST',
@@ -142,10 +145,16 @@ var accounts = {
                     },
                     success:function(data){
                         accounts.types.tempData = {};
-                        accounts.display();
+                        // TODO - TEST
+                        if(parseInt(data)==0 || isNaN(parseInt(data))){
+                            notice.display('warning', 'Could not save account type at this time');
+                        } else {
+                            accounts.display();
+                        }
                     },
                     error:function(){
-                        // TODO - display error message
+                        // TODO - TEST
+                        notice.display('danger', 'Error occurred while trying to save account type information');
                         accounts.types.tempData = {};
                         loading.end();
                     }
@@ -170,10 +179,16 @@ var accounts = {
                     },
                     success:function(data){
                         accounts.types.tempData = {};
-                        accounts.display();
+                        // TODO - TEST
+                        if(parseInt(data)==0 || isNaN(parseInt(data))){
+                            notice.display('warning', 'Could not disable account type at this time');
+                        } else {
+                            accounts.display();
+                        }
                     },
                     error:function(){
-                        // TODO - display error message
+                        // TODO - TEST
+                        notice.display('danger', 'Error occurred while trying to disable account type');
                         accounts.types.tempData = {};
                         loading.end();
                     }
@@ -181,6 +196,7 @@ var accounts = {
             }
         },
         initHandler: function(element){
+            notice.remove();
             var accountTypeData = {};
             accountTypeData.accountID = $(element).parents('tr').prop('id');
             accountTypeData.typeID = $(element).parents('li').prop('id');
@@ -197,6 +213,24 @@ function digitsOnly(){
         $(this).val('');
     }
 }
+
+var notice = {
+    display: function(alertType, alertText){
+        var validAlertTypes = ['info', 'warning', 'success', 'danger'];
+        var alertToDisplay = '';
+        if($.inArray(alertType, validAlertTypes) > -1){
+            alertToDisplay += '<div class="alert alert-'+alertType+' alert-dismissable" role="alert">';
+            alertToDisplay += '     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>';
+            alertToDisplay += '     '+alertText;
+            alertToDisplay += '</div>';
+        }
+        $('.row').before(alertToDisplay);
+    },
+    remove: function(){
+        $('.alert').remove();
+    }
+};
+
 
 $(function(){
     loading.img = 'imgs/loader.gif';
