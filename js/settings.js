@@ -153,9 +153,32 @@ var accounts = {
             }
         },
         disable: function(){
-            // TODO - disable account type
-            var typeData = accounts.types.initHandler($(this)[0]);
-            alert('Account Type Disable doesn\'t work yet.');
+            // TODO - TEST
+            if(confirm("Are you sure you want to disable this account type?")){
+                var typeData = accounts.types.initHandler($(this)[0]);
+                accounts.types.tempData.accountID = typeData.accountID.replace('account_setting_', '');
+                accounts.types.tempData.typeID = typeData.typeID.replace('type_', '');
+                $.ajax({
+                    type: 'POST',
+                    url: url+nocache(),
+                    data: {
+                        type: 'disable_account_type',
+                        type_data: accounts.types.tempData
+                    },
+                    beforeSend:function(){
+                        loading.start();
+                    },
+                    success:function(data){
+                        accounts.types.tempData = {};
+                        accounts.display();
+                    },
+                    error:function(){
+                        // TODO - display error message
+                        accounts.types.tempData = {};
+                        loading.end();
+                    }
+                });
+            }
         },
         initHandler: function(element){
             var accountTypeData = {};

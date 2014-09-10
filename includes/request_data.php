@@ -60,6 +60,7 @@ switch($_REQUEST['type']){
         $data['has_attachment'] = ProcessData::upload_attachment($data['attachments']);
         $post_data = array('data'=>base64_encode(json_encode($data)));
         $callback = 'do_nothing';
+        unset($data);
         break;
 
     case 'get_account_data':
@@ -73,7 +74,18 @@ switch($_REQUEST['type']){
         $data = json_encode(ProcessData::clean_input('type_data'));
         $post_data = array('data'=>base64_encode($data));
         $callback = 'do_nothing';
+        unset($data);
         break;
+    
+    case 'disable_account_type':
+        $uri = 'disable_account_type';
+        $post = true;
+        $data = json_encode(ProcessData::clean_input('type_data'));
+        $post_data = array('data'=>base64_encode($data));
+        $callback = 'do_nothing';
+        unset($data);
+        break;
+    
     default:
         $uri = '';
         $callback = 'do_nothing';
