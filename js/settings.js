@@ -162,11 +162,10 @@ var accounts = {
             }
         },
         disable: function(){
-            // TODO - TEST
             if(confirm("Are you sure you want to disable this account type?")){
                 var typeData = accounts.types.initHandler($(this)[0]);
                 accounts.types.tempData.accountID = typeData.accountID.replace('account_setting_', '');
-                accounts.types.tempData.typeID = typeData.typeID.replace('type_', '');
+                accounts.types.tempData.id = typeData.typeID.replace('type_', '');
                 $.ajax({
                     type: 'POST',
                     url: url+nocache(),
@@ -179,7 +178,6 @@ var accounts = {
                     },
                     success:function(data){
                         accounts.types.tempData = {};
-                        // TODO - TEST
                         if(parseInt(data)==0 || isNaN(parseInt(data))){
                             notice.display('warning', 'Could not disable account type at this time');
                         } else {
@@ -187,7 +185,6 @@ var accounts = {
                         }
                     },
                     error:function(){
-                        // TODO - TEST
                         notice.display('danger', 'Error occurred while trying to disable account type');
                         accounts.types.tempData = {};
                         loading.end();
