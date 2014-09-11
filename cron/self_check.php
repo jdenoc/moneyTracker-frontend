@@ -10,7 +10,7 @@
  */
 
 require_once(__DIR__.'/../Lib/php/PDO_Connection.php');
-$db = new PDO_Connection('jdenocco_receipt', __DIR__.'/../config/config.db.php');        // TODO - change DB name to money_tracker
+$db = new PDO_Connection('jdenoc_money_tracker', __DIR__.'/../config/config.db.php');
 
 $accounts = $db->getAllRows("SELECT * FROM accounts");
 $msg = "";
