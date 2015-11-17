@@ -6,7 +6,9 @@
  */
 
 require_once(__DIR__.'/../Lib/php/PDO_Connection.php');
-$db = new PDO_Connection('jdenoc_money_tracker', __DIR__.'/../config/config.db.php');
+$db_config = require(__DIR__.'/../config/config.db.php');
+$db = new PDO_Connection($db_config['database'], $db_config['username'], $db_config['password'], $db_config['hostname']);
+unset($db_config);
 $user = $db->getRow("SELECT id FROM users WHERE email=:email", array('email'=>$_REQUEST['email']));
 if(empty($user)){
     print 0;
