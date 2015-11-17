@@ -12,7 +12,9 @@ if(empty($_SESSION['email'])){
 }
 
 require_once(__DIR__.'/Lib/php/PDO_Connection.php');
-$db = new PDO_Connection('jdenoc_money_tracker', __DIR__.'/config/config.db.php');
+$db_config = require(__DIR__.'/config/config.db.php');
+$db = new PDO_Connection($db_config['database'], $db_config['username'], $db_config['password'], $db_config['hostname']);
+unset($db_config);
 $account_types = $db->getAllRows("SELECT id, type_name, last_digits FROM account_types WHERE disabled=0 ORDER BY type_name, last_digits");
 $account_type_options = '';
 foreach($account_types as $at){

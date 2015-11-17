@@ -14,7 +14,9 @@ if(empty($_SESSION['email'])){
 require_once(__DIR__.'/Lib/php/PDO_Connection.php');
 
 $id = intval($_REQUEST['id']);
-$db = new PDO_Connection('jdenoc_money_tracker', __DIR__.'/config/config.db.php');
+$db_config = require(__DIR__.'/config/config.db.php');
+$db = new PDO_Connection($db_config['database'], $db_config['username'], $db_config['password'], $db_config['hostname']);
+unset($db_config);
 
 $attachment = $db->getRow("SELECT * FROM attachments WHERE id=:attachment_id;", array('attachment_id'=>$id));
 $md5 = include_once(__DIR__ . '/config/config.md5.php');
