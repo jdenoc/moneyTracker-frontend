@@ -50,7 +50,7 @@ switch($_REQUEST['type']){
 
     case 'entry':
         $uri = '/entry/id/'.$_POST['id'];
-        $callback = 'decode';
+        $callback = 'undo_json_decode';
         break;
 
     case 'save':
