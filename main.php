@@ -15,6 +15,7 @@ require_once(__DIR__.'/Lib/php/PDO_Connection.php');
 $db_config = require(__DIR__.'/config/config.db.php');
 $db = new PDO_Connection($db_config['database'], $db_config['username'], $db_config['password'], $db_config['hostname']);
 unset($db_config);
+
 $account_types = $db->getAllRows("SELECT id, type_name, last_digits FROM account_types WHERE disabled=0 ORDER BY type_name, last_digits");
 $account_type_options = '';
 foreach($account_types as $at){
@@ -196,8 +197,9 @@ foreach($account_types as $at){
                     <label>Expense:<input type="radio" name="filter_expense" class="filter_expense" value="1"/></label>
                     <label>Both:<input type="radio" name="filter_expense" class="filter_expense income_expense" value=""/></label>
                 </div>
-                <label><span>Has Attachment:</span><input type="checkbox" name="filter_attachments" id="filter_attachments"/></label>
-                <label><span>No Attachment:</span><input type="checkbox" name="filter_no_attachments" id="filter_no_attachments"/></label>
+                <label><span>Has Attachment(s):</span><input type="checkbox" name="filter_attachments" id="filter_attachments"/></label>
+                <label><span>No Attachment(s):</span><input type="checkbox" name="filter_no_attachments" id="filter_no_attachments"/></label>
+                <label><span>Confirmed:</span><input type="checkbox" name="filter_confirmed" id="filter_confirmed"/></label>
                 <label><span>Not Confirmed:</span><input type="checkbox" name="filter_unconfirmed" id="filter_unconfirmed"/></label>
                 <label><span>Min Range:</span><span>$</span><input type="text" name="filter_min_range" id="filter_min_range" class="form-control" placeholder="0.00"/></label>
                 <label><span>Max Range:</span><span>$</span><input type="text" name="filter_max_range" id="filter_max_range" class="form-control" placeholder="100.00"/></label>

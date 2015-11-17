@@ -332,6 +332,9 @@ var filter = {
             filter['attachments'] = 0;
         }
         if($('#filter_unconfirmed').prop('checked')){
+            filter['confirm'] = 0;
+        }
+        if($('#filter_confirmed').prop('checked')){
             filter['confirm'] = 1;
         }
         if(minRange.val() != '' && minRange.val() > 0){
