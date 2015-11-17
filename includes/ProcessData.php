@@ -6,8 +6,10 @@
 
 class ProcessData {
 
+    const ERROR_TITLE = 'Money-Tracker Request Error:';
+    const CURL_TIMEOUT = 12; // CURL calls to timeout after 12 seconds
+
     private static $auth;
-    public static $error_title = 'Money-Tracker Request Error:';
 
     public static function make_call($url, $post=false, $post_data=array()){
         $ch = curl_init();
@@ -15,7 +17,7 @@ class ProcessData {
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Authorization:'.self::get_auth()
         ));
-        curl_setopt($ch, CURLOPT_TIMEOUT, 8);
+        curl_setopt($ch, CURLOPT_TIMEOUT, self::CURL_TIMEOUT);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
         curl_setopt($ch, CURLOPT_POST, $post);
@@ -25,7 +27,7 @@ class ProcessData {
         $result = curl_exec($ch);
 
         if (curl_errno($ch)) {
-            error_log(self::$error_title."services connection issue\nURL:".$url."\n".curl_error($ch));
+            error_log(self::ERROR_TITLE."services connection issue\nURL:".$url."\n".curl_error($ch));
         }
         curl_close($ch);
         return $result;
@@ -35,61 +37,56 @@ class ProcessData {
         return empty($_POST[$post]) ? '' : $_POST[$post];
     }
 
-    public static function list_accounts($data){
-        $accounts = self::base_process($data);
+    public static function list_accounts($accounts_data){
         $display = '';
         $account_position = 3;
-        foreach($accounts as $account){
+        foreach($accounts_data as $account){
             $display .= '<li><a href="#" onclick="filter.reset();displayAccount({\'group\':'.$account['id'].'}, '.$account_position.')">'.$account['account'].'<br/>$'.number_format($account['total'], 2).'</a></li>'."\r\n";
             $account_position++;
         }
         return $display;
     }
 
-    public static function list_entries($data){
-        $entries = self::base_process($data);
+    public static function list_entries($entries_data){
         $display = '';
 
-        $json_response = self::make_call(self::get_url().'tags');
+        $json_response = self::make_call(self::get_url().'/tags');
         if(!$tags_data = json_decode($json_response, true)){
-            error_log(self::$error_title.$json_response);
+            error_log(self::ERROR_TITLE.$json_response);
             $tags = array();
         } else {
-            if(empty($response_array['error'])){
-                $tags = self::base_process($tags_data['result']);
+            if(empty($tags_data['error'])){
+                $tags = $tags_data['result'];
             } else {
-                error_log(self::$error_title.$response_array['error']);
+                error_log(self::ERROR_TITLE.$tags_data['error']);
                 $tags = array();
             }
         }
 
-        foreach($entries as $row){
+        foreach($entries_data as $row){
             $tag_displays = '';
             if(!empty($row['tags'])){
-                $tag_ids = json_decode($row['tags'], true);
                 foreach($tags as $t){
-                    if(in_array($t['id'], $tag_ids)){
+                    if(in_array($t['id'], $row['tags'])){
                         $tag_displays .= '<span class="label label-default">'.$t['tag'].'</span><br/>'."\r\n";
                     }
                 }
             }
-            $display .= '<tr class="'.(!$row['confirm'] ? 'warning' : (!$row['expense'] ? 'success' : '' )).'">';
-            $display .= '  <td class="check-col" data-toggle="modal" data-target="#entry-modal" onclick="editDisplay.fill('.$row['id'].');">';
-            $display .= '      <span class="glyphicon glyphicon-pencil"></span>';
-            $display .= '  </td>';
-            $display .= '  <td class="date-col">'.$row['date'].'</td>';
-            $display .= '  <td>'.$row['memo'].'</td>';
-            $display .= '  <td class="value-col">$'.number_format($row['value'], 2).'</td>';
-            $display .= '  <td class="type-col"><span class="glyphicon glyphicon-list-alt" onclick="alert(\''.$row['account_type_name'].' ('.$row['account_last_digits'].')\n'.($row['expense']?'Expense':'Income').($row['confirm']?'\nConfirmed':'').'\')"></span></td>';
-            $display .= '  <td><input type="checkbox" '.($row['has_attachment']==1 ? 'checked' : '' ).' onclick="return false;" /></td>';
-            $display .= '  <td>'.$tag_displays.'</td>';
-            $display .= '</tr>';
+            $display .= '<tr class="'.(!$row['confirm'] ? 'warning' : (!$row['expense'] ? 'success' : '' )).'">'."\r\n";
+            $display .= '  <td class="check-col" data-toggle="modal" data-target="#entry-modal" onclick="editDisplay.fill('.$row['id'].');">'."\r\n";
+            $display .= "      <span class=\"glyphicon glyphicon-pencil\"></span>\r\n";
+            $display .= "  </td>\r\n";
+            $display .= '  <td class="date-col">'.$row['entry_date']."</td>\r\n";
+            $display .= '  <td>'.$row['memo']."</td>\r\n";
+            $display .= '  <td class="value-col">$'.number_format($row['entry_value'], 2)."</td>\r\n";
+            $display .= '  <td class="type-col"><span class="glyphicon glyphicon-list-alt" onclick="alert(\'';
+            $display .= $row['account_type_name'].' ('.$row['account_last_digits'].')\n'.($row['expense']?'Expense':'Income').($row['confirm']?'\nConfirmed':'');
+            $display .= ")\"></span></td>\r\n";
+            $display .= '  <td><input type="checkbox" '.($row['has_attachment']==1 ? 'checked' : '' )." onclick=\"return false;\" /></td>\r\n";
+            $display .= '  <td>'.$tag_displays."</td>\r\n";
+            $display .= "</tr>\r\n";
         }
         return $display;
-    }
-
-    private static function base_process($data){
-        return json_decode(self::decode($data), true);
     }
 
     public static function do_nothing($data){
@@ -108,19 +105,15 @@ class ProcessData {
         self::$auth = 'test';
     }
 
-    public static function decode($data){
-        return base64_decode($data);
-    }
-    
     private static function get_env(){
         return getenv('ENV_TYPE');
     }
     
     public static function get_url(){
         if(self::get_env() == 'live'){
-            return 'https://services.jdenoc.com/api/money_tracker/';
+            return 'https://services.jdenoc.com/api/money_tracker';
         } else {
-            return 'http://services.local/api/money_tracker/';
+            return 'http://codeigniter.services.local/api/money_tracker';
         }
     }
 
@@ -141,8 +134,7 @@ class ProcessData {
         return $has_attachment;
     }
 
-    public static function display_account_settings($data){
-        $account_data = self::base_process($data);
+    public static function display_account_settings($account_data){
         $type_options = $account_data['types'];
         unset($account_data['types']);
         
@@ -170,5 +162,9 @@ class ProcessData {
         $display .= "\tvar types = ".json_encode($types).";\r\n";
         $display .= "</script>";
         return $display;
+    }
+
+    public static function undo_json_decode($data){
+        return json_encode($data);
     }
 }
