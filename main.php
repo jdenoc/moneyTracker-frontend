@@ -46,8 +46,10 @@ foreach($account_types as $at){
     <script type="text/javascript" src="Lib/js/misc.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
 
-    <script src="jQuery-tags-input/jquery.tagsinput.min.js"></script>
-    <link href="jQuery-tags-input/jquery.tagsinput.css" rel="stylesheet" type="text/css" />
+    <!-- jQuery-tokeninput -->
+    <script src="jquery-tokeninput/jquery.tokeninput.js"></script>
+    <link href="jquery-tokeninput/token-input-facebook.css" rel="stylesheet" type="text/css" />
+    <!-- END - jQuery-tokeninput -->
 
     <!-- Drag and Drop code -->
     <script src="js/draganddrop.js" type="text/javascript"></script>

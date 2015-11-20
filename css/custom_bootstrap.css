@@ -83,7 +83,7 @@
     width: 200px;
     padding: 3px 6px;
 }
-#entry_tags_tagsinput{ margin: auto; }
+#entry_tags{ display: none; }
 #entry_delete{ float: left; }
 #entry_save span{
     font-size: 12px;
