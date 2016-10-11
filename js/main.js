@@ -173,7 +173,7 @@ function fillTable(all){
                 }
             },
             error:function(){
-                notice.display('danger', 'Could not accounts');
+                notice.display('danger', 'Could not retrieve accounts');
             }
         });
     }
