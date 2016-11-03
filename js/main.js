@@ -41,7 +41,7 @@ var editDisplay = {
         $('#entry_id').val(-1);
         $('#entry_date').val(
             today.getFullYear()+'-'
-                +(today.getMonth()<10?'0':'')+(today.getMonth()+1)+'-'
+                +(today.getMonth()<9?'0':'')+(today.getMonth()+1)+'-'	// months in JavaScript start from 0=January
                 +(today.getDate()<10?'0':'')+today.getDate()
         );
         $('#entry_confirm').prop('checked', false);
@@ -173,7 +173,7 @@ function fillTable(all){
                 }
             },
             error:function(){
-                notice.display('danger', 'Could not accounts');
+                notice.display('danger', 'Could not retrieve accounts');
             }
         });
     }
