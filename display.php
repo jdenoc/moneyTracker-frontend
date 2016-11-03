@@ -12,13 +12,13 @@ if(empty($_SESSION['email'])){
 }
 
 require_once(__DIR__.'/Lib/php/PDO_Connection.php');
+require_once(__DIR__.'/includes/process_data.php');
 
 $id = intval($_REQUEST['id']);
 $db = new PDO_Connection('jdenoc_money_tracker', __DIR__.'/config/config.db.php');
 
 $attachment = $db->getRow("SELECT * FROM attachments WHERE id=:attachment_id;", array('attachment_id'=>$id));
-$md5 = include_once(__DIR__ . '/config/config.md5.php');
-$filename ='receipts_attachments/'. md5($attachment['attachment'].$md5).$attachment['ext'];
+$filename ='receipts_attachments/'. ProcessData::generate_file_hash($attachment['attachment']);
 
 if(!file_exists($filename)){
     display404();

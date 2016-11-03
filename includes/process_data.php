@@ -35,6 +35,12 @@ class ProcessData {
         return empty($_POST[$post]) ? '' : $_POST[$post];
     }
 
+    public static function generate_file_hash($filename){
+        $md5_hash = require(__DIR__ . '/../config/config.md5.php');
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        return md5($filename.$md5_hash).'.'.$ext;
+    }
+
     public static function list_accounts($data){
         $accounts = self::base_process($data);
         $display = '';
@@ -126,16 +132,14 @@ class ProcessData {
 
     public static function upload_attachment($attachments){
         // Attachment uploader
-        $md5 = include_once(__DIR__ . '/../config/config.md5.php');
         $output_dir = __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."receipts_attachments".DIRECTORY_SEPARATOR;
-        $tmp_dir = __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR;
         $has_attachment = 0;
         if(!empty($attachments)){
             foreach($attachments as $attachment){
-                $has_attachment = 1;
-                $pos = strrpos($attachment, '.');
-                $ext = substr($attachment, $pos);
-                rename($tmp_dir.$attachment,$output_dir.md5($attachment.$md5).$ext);
+                $temp_file = sys_get_temp_dir().DIRECTORY_SEPARATOR.$attachment;
+                if(file_exists($temp_file) && rename($temp_file,$output_dir.self::generate_file_hash($attachment))){
+                    $has_attachment=1;
+                }
             }
         }
         return $has_attachment;
