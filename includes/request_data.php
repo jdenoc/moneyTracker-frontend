@@ -4,7 +4,7 @@
  * Date: 2014-08-09
  */
 
-require_once(__DIR__.'/process_data.php');
+require_once(__DIR__ . '/ProcessData.php');
 
 $post = false;
 $post_data = array();

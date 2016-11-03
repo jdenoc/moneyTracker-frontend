@@ -12,7 +12,7 @@ if(empty($_SESSION['email'])){
 }
 
 require_once(__DIR__.'/Lib/php/PDO_Connection.php');
-require_once(__DIR__.'/includes/process_data.php');
+require_once(__DIR__ . '/includes/ProcessData.php');
 
 $id = intval($_REQUEST['id']);
 $db = new PDO_Connection('jdenoc_money_tracker', __DIR__.'/config/config.db.php');
