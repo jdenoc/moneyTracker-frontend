@@ -57,7 +57,7 @@ switch($_REQUEST['type']){
         $uri = 'save';
         $post = true;
         $data = json_decode(ProcessData::clean_input('entry_data'), true);
-        $data['has_attachment'] = ProcessData::upload_attachment($data['attachments']);
+        $data['attachments'] = ProcessData::upload_attachments($data['attachments']);
         $post_data = array('data'=>base64_encode(json_encode($data)));
         $callback = 'do_nothing';
         unset($data);
