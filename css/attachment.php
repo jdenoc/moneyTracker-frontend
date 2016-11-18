@@ -10,13 +10,15 @@ if(empty($_SESSION['email'])){
 }
 
 require_once(__DIR__.'/../Lib/php/PDO_Connection.php');
+require_once(__DIR__.'/../includes/ProcessData.php');
 
 $id = intval($_REQUEST['id']);
 $db = new PDO_Connection('jdenoc_money_tracker', __DIR__.'/../config/config.db.php');
 
 $attachment = $db->getRow("SELECT * FROM attachments WHERE id=:attachment_id;", array('attachment_id'=>$id));
-$md5 = include_once(__DIR__ . '/../config/config.md5.php');
-$filename ='../receipts_attachments/'. md5($attachment['attachment'].$md5).$attachment['ext'];
+// file must be relative. Browser can't display absolute paths
+$filename = '../receipts_attachments/'. ProcessData::hash_filename($attachment['attachment'], $attachment['uid']);
+
 $size = getimagesize($filename);
 while($size[0]>700){
     $size[0] /= 2;
