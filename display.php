@@ -18,7 +18,8 @@ $id = intval($_REQUEST['id']);
 $db = new PDO_Connection('jdenoc_money_tracker', __DIR__.'/config/config.db.php');
 
 $attachment = $db->getRow("SELECT * FROM attachments WHERE id=:attachment_id;", array('attachment_id'=>$id));
-$filename ='receipts_attachments/'. ProcessData::hash_filename($attachment['attachment'], $attachment['uid']);
+// file must be relative. Browser can't display absolute paths
+$filename = 'receipts_attachments/'. ProcessData::hash_filename($attachment['attachment'], $attachment['uid']);
 
 if(!file_exists($filename)){
     display404();
