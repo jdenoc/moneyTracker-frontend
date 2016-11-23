@@ -4,6 +4,9 @@
  * Date: 2014-08-12
  */
 
+require_once __DIR__.'/../vendor/autoload.php';
+use Ramsey\Uuid\Uuid;
+
 class ProcessData {
 
     private static $auth;
@@ -49,7 +52,8 @@ class ProcessData {
      * @return string
      */
     public static function generate_file_uid(){
-        return uniqid(microtime(true).'.', true);
+        $uuid4 = Uuid::uuid4();
+        return $uuid4->toString();
     }
 
     public static function list_accounts($data){
