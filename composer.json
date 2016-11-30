@@ -1,0 +1,7 @@
+{
+    "name": "jdenoc/money-tracker",
+    "type": "project",
+    "require": {
+        "ramsey/uuid": "^3.5"
+    }
+}
