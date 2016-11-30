@@ -357,27 +357,27 @@ var filter = {
 };
 
 var attachments = {
-    open: function(attachment_id){
-        var url = 'display.php?id='+attachment_id;
+    open: function(attachmentId){
+        var url = '/display/'+attachmentId;
         var win=window.open(url, '_blank');
         win.focus();
     },
-    del: function(attachment_id){
+    del: function(attachmentId){
         var entryId = $('#entry_id').val();
-        if(confirm('Are you sure you want to delete attchment: '+attachment_id)){
+        if(confirm('Are you sure you want to delete attachment: '+attachmentId)){
             $.ajax({
                 type: 'POST',
                 url: url+nocache(),
                 data: {
                     type: 'delete_attachment',
                     entry_id : entryId,
-                    id: attachment_id
+                    id: attachmentId
                 },
                 beforeSend:function(){
                     notice.remove();
                 },
                 success:function(data){
-                    $('#attachment_'+attachment_id).remove();
+                    $('#attachment_'+attachmentId).remove();
                     $('#entry_has_attachment').val( parseInt(data) );
                 },
                 error:function(){

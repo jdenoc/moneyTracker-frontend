@@ -4,6 +4,9 @@
  * Date: 2014-08-12
  */
 
+require_once __DIR__.'/../vendor/autoload.php';
+use Ramsey\Uuid\Uuid;
+
 class ProcessData {
 
     private static $auth;
@@ -33,6 +36,24 @@ class ProcessData {
 
     public static function clean_input($post){
         return empty($_POST[$post]) ? '' : $_POST[$post];
+    }
+
+    /**
+     * @param string $filename
+     * @param string $file_uid
+     * @return string
+     */
+    public static function hash_filename($filename, $file_uid){
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        return md5($filename.$file_uid).'.'.$ext;
+    }
+
+    /**
+     * @return string
+     */
+    public static function generate_file_uid(){
+        $uuid4 = Uuid::uuid4();
+        return $uuid4->toString();
     }
 
     public static function list_accounts($data){
@@ -124,28 +145,38 @@ class ProcessData {
         }
     }
 
-    public static function upload_attachment($attachments){
-        // Attachment uploader
-        $md5 = include_once(__DIR__ . '/../config/config.md5.php');
+    /**
+     * @param string $attachment_name
+     * @param string $attachment_uid
+     * @return bool
+     */
+    public static function upload_attachment($attachment_name, $attachment_uid){
         $output_dir = __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."receipts_attachments".DIRECTORY_SEPARATOR;
-        $tmp_dir = __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."tmp".DIRECTORY_SEPARATOR;
-        $has_attachment = 0;
-        if(!empty($attachments)){
-            foreach($attachments as $attachment){
-                $has_attachment = 1;
-                $pos = strrpos($attachment, '.');
-                $ext = substr($attachment, $pos);
-                rename($tmp_dir.$attachment,$output_dir.md5($attachment.$md5).$ext);
+        $temp_file = sys_get_temp_dir().DIRECTORY_SEPARATOR.$attachment_name;
+        return (file_exists($temp_file) && rename($temp_file, $output_dir.self::hash_filename($attachment_name, $attachment_uid)));
+    }
+
+    /**
+     * @param array $attachments
+     * @return array
+     */
+    public static function upload_attachments($attachments){
+        $uploaded_attachments = array();
+        foreach($attachments as $attachment){
+            $uid = self::generate_file_uid();
+            $uploaded = self::upload_attachment($attachment, $uid);
+            if($uploaded){
+                $uploaded_attachments[] = array('filename'=>$attachment, 'uid'=>$uid);
             }
         }
-        return $has_attachment;
+        return $uploaded_attachments;
     }
 
     public static function display_account_settings($data){
         $account_data = self::base_process($data);
         $type_options = $account_data['types'];
         unset($account_data['types']);
-        
+
         $display = '';
         $types = array();
         foreach($account_data as $id=>$account){
