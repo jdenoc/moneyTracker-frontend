@@ -1,14 +1,13 @@
 <?php
 
-$session_title = include_once(__DIR__ . '/../config/config.session.php');
-session_name($session_title);
+require_once __DIR__.'/../includes/ProcessData.php';
+
+session_name(getenv('SESSION_NAME'));
 session_start();
 
 if(empty($_SESSION['email'])){
     display_404();
 }
-
-require_once __DIR__.'/../includes/ProcessData.php';
 
 $attachment_id = empty($_REQUEST['uuid']) ? '' : $_REQUEST['uuid'];
 if(!ProcessData::is_valid_uuid($attachment_id)){

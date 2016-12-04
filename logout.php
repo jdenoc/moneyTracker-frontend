@@ -1,12 +1,8 @@
 <?php
-/**
- * User: denis
- * Date: 3/26/14
- * Time: 10:30 PM
- */
 
-$session_title = include_once(__DIR__ . '/config/config.session.php');
-session_name($session_title);
+require_once __DIR__.'/includes/initialise_env.php';
+
+session_name(getenv("SESSION_NAME"));
 session_start();
 $_SESSION['name'] = '';
 $_SESSION['pic'] = '';

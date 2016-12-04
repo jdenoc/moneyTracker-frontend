@@ -1,13 +1,8 @@
 <?php
-/**
- * User: denis
- * Date: 2014-02-03
- */
 
 require_once __DIR__.'/includes/ProcessData.php';
 
-$session_title = require __DIR__.'/config/config.session.php';
-session_name($session_title);
+session_name(getenv("SESSION_NAME"));
 session_start();
 if(empty($_SESSION['email'])){
     header('Location: logout.php');
