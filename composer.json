@@ -2,6 +2,7 @@
     "name": "jdenoc/money-tracker",
     "type": "project",
     "require": {
-        "ramsey/uuid": "^3.5"
+        "ramsey/uuid": "^3.5",
+        "catfan/Medoo": "^1.1"
     }
 }

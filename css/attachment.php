@@ -9,13 +9,21 @@ if(empty($_SESSION['email'])){
     exit;
 }
 
-require_once(__DIR__.'/../Lib/php/PDO_Connection.php');
-require_once(__DIR__.'/../includes/ProcessData.php');
+require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/../includes/ProcessData.php';
 
-$id = intval($_REQUEST['id']);
-$db = new PDO_Connection('jdenoc_money_tracker', __DIR__.'/../config/config.db.php');
+$attachment_id = intval($_REQUEST['id']);
+$db_config = require __DIR__.'/../config/config.db.php';
+$db = new medoo(array(
+    'database_type' => 'mysql',
+    'database_name' => $db_config['database'],
+    'server' => $db_config['hostname'],
+    'username' => $db_config['username'],
+    'password' => $db_config['password'],
+    'charset' => 'utf8mb64'
+));
 
-$attachment = $db->getRow("SELECT * FROM attachments WHERE id=:attachment_id;", array('attachment_id'=>$id));
+$attachment = $db->get('attachments', array('attachment', 'uid'), array('id'=>$attachment_id));
 // file must be relative. Browser can't display absolute paths
 $filename = 'receipts_attachments/'.ProcessData::hash_filename($attachment['attachment'], $attachment['uid']);
 

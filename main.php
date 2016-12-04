@@ -3,6 +3,9 @@
  * User: denis
  * Date: 2014-02-03
  */
+
+require_once __DIR__.'/vendor/autoload.php';
+
 $session_title = include_once(__DIR__ . '/config/config.session.php');
 session_name($session_title);
 session_start();
@@ -11,9 +14,21 @@ if(empty($_SESSION['email'])){
     exit;
 }
 
-require_once(__DIR__.'/Lib/php/PDO_Connection.php');
-$db = new PDO_Connection('jdenoc_money_tracker', __DIR__.'/config/config.db.php');
-$account_types = $db->getAllRows("SELECT id, type_name, last_digits FROM account_types WHERE disabled=0 ORDER BY type_name, last_digits");
+$db_config = require __DIR__.'/config/config.db.php';
+$db = new medoo(array(
+    'database_type' => 'mysql',
+    'database_name' => $db_config['database'],
+    'server' => $db_config['hostname'],
+    'username' => $db_config['username'],
+    'password' => $db_config['password'],
+    'charset' => 'utf8mb64'
+));
+
+$account_types = $db->select(
+    "account_types",
+    array('id', 'type_name', 'last_digits'),
+    array('disabled'=>0, "ORDER"=>array('type_name', 'last_digits'))
+);
 $account_type_options = '';
 foreach($account_types as $at){
     $account_type_options .= '<option value="'.$at['id'].'">'.$at['type_name'].' ('.$at['last_digits'].')</option>'."\r\n";
