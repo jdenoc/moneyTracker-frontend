@@ -73,7 +73,7 @@ class ProcessData {
         $entries = self::base_process($data);
         $display = '';
 
-        $json_response = self::make_call(self::get_url().'tags');
+        $json_response = self::make_call(self::get_base_rest_url().'/tags');
         if(!$tags_data = json_decode($json_response, true)){
             error_log(self::$error_title.$json_response);
             $tags = array();
@@ -134,17 +134,14 @@ class ProcessData {
     public static function decode($data){
         return base64_decode($data);
     }
-    
-    private static function get_env(){
-        return getenv('ENV_TYPE');
-    }
-    
-    public static function get_url(){
-        if(self::get_env() == 'live'){
-            return 'https://services.jdenoc.com/api/money_tracker/';
-        } else {
-            return 'http://services.local/api/money_tracker/';
-        }
+
+    /**
+     * Obtains the base URL to the REST service from an environment variable
+     * REST service base URL does NOT end with a /
+     * @return string
+     */
+    public static function get_base_rest_url(){
+        return rtrim(getenv("REST_SERVICE_BASE_URL"), '/');
     }
 
     /**
