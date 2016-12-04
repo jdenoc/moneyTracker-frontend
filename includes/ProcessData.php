@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/initialise_env.php';
 use Ramsey\Uuid\Uuid;
 
 class ProcessData {
@@ -210,13 +211,12 @@ class ProcessData {
      */
     public static function get_db_object(){
         if(is_null(self::$db)){
-            $db_config = require __DIR__.'/../config/config.db.php';
             self::$db = new medoo(array(
                 'database_type' => 'mysql',
-                'database_name' => $db_config['database'],
-                'server' => $db_config['hostname'],
-                'username' => $db_config['username'],
-                'password' => $db_config['password'],
+                'database_name' => getenv('DB_NAME'),
+                'server' => getenv('DB_HOST'),
+                'username' => getenv('DB_USER'),
+                'password' => getenv('DB_PASS'),
                 'charset' => 'utf8mb64'
             ));
         }
