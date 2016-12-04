@@ -1,6 +1,7 @@
 <?php
 return array(
-    'db_username'=>'',     // Mysql username    TODO - need value
-    'db_password'=>'',     // Mysql password    TODO - need value
-    'db_host'=>''          // Host name         TODO - need value
+    'hostname'=>'',     // Database Hostname    TODO - need value
+    'database'=>'',     // Database Name        TODO - need value
+    'username'=>'',     // Database username    TODO - need value
+    'password'=>''      // Database password    TODO - need value
 );
