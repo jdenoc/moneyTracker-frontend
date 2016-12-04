@@ -1,6 +1,5 @@
 <?php
 
-require_once __DIR__.'/vendor/autoload.php';
 require_once __DIR__.'/includes/ProcessData.php';
 
 $session_title = include_once __DIR__ .'/config/config.session.php';
@@ -11,18 +10,8 @@ if(empty($_SESSION['email'])){
     display_404();
 }
 
-$db_config = require __DIR__.'/config/config.db.php';
-$db = new medoo(array(
-    'database_type' => 'mysql',
-    'database_name' => $db_config['database'],
-    'server' => $db_config['hostname'],
-    'username' => $db_config['username'],
-    'password' => $db_config['password'],
-    'charset' => 'utf8mb64'
-));
-
 $attachment_id = intval($_REQUEST['id']);
-$attachment = $db->get('attachments', array('attachment', 'uid'), array('id'=>$attachment_id));
+$attachment = ProcessData::get_db_object()->get('attachments', array('attachment', 'uid'), array('id'=>$attachment_id));
 $filename = __DIR__.DIRECTORY_SEPARATOR.'receipts_attachments'.DIRECTORY_SEPARATOR.ProcessData::hash_filename($attachment['attachment'], $attachment['uid']);
 
 if(!file_exists($filename)){

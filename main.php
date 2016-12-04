@@ -4,9 +4,9 @@
  * Date: 2014-02-03
  */
 
-require_once __DIR__.'/vendor/autoload.php';
+require_once __DIR__.'/includes/ProcessData.php';
 
-$session_title = include_once(__DIR__ . '/config/config.session.php');
+$session_title = require __DIR__.'/config/config.session.php';
 session_name($session_title);
 session_start();
 if(empty($_SESSION['email'])){
@@ -14,17 +14,7 @@ if(empty($_SESSION['email'])){
     exit;
 }
 
-$db_config = require __DIR__.'/config/config.db.php';
-$db = new medoo(array(
-    'database_type' => 'mysql',
-    'database_name' => $db_config['database'],
-    'server' => $db_config['hostname'],
-    'username' => $db_config['username'],
-    'password' => $db_config['password'],
-    'charset' => 'utf8mb64'
-));
-
-$account_types = $db->select(
+$account_types = ProcessData::get_db_object()->select(
     "account_types",
     array('id', 'type_name', 'last_digits'),
     array('disabled'=>0, "ORDER"=>array('type_name', 'last_digits'))

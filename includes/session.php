@@ -5,19 +5,9 @@
  * Time: 7:55 PM
  */
 
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/../includes/ProcessData.php';
 
-$db_config = require __DIR__.'/../config/config.db.php';
-$db = new medoo(array(
-    'database_type' => 'mysql',
-    'database_name' => $db_config['database'],
-    'server' => $db_config['hostname'],
-    'username' => $db_config['username'],
-    'password' => $db_config['password'],
-    'charset' => 'utf8mb64'
-));
-
-$user = $db->get("users", 'id', array('email'=>$_REQUEST['email']));
+$user = ProcessData::get_db_object()->get("users", 'id', array('email'=>$_REQUEST['email']));
 if(empty($user)){
     print 0;
 } else {

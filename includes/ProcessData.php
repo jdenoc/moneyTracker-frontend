@@ -1,8 +1,4 @@
 <?php
-/**
- * User: denis
- * Date: 2014-08-12
- */
 
 require_once __DIR__.'/../vendor/autoload.php';
 use Ramsey\Uuid\Uuid;
@@ -10,6 +6,7 @@ use Ramsey\Uuid\Uuid;
 class ProcessData {
 
     private static $auth;
+    private static $db;
     public static $error_title = 'Money-Tracker Request Error:';
 
     public static function make_call($url, $post=false, $post_data=array()){
@@ -201,5 +198,24 @@ class ProcessData {
         $display .= "\tvar types = ".json_encode($types).";\r\n";
         $display .= "</script>";
         return $display;
+    }
+
+    /**
+     * Returns a medoo database object
+     * @return medoo
+     */
+    public static function get_db_object(){
+        if(is_null(self::$db)){
+            $db_config = require __DIR__.'/../config/config.db.php';
+            self::$db = new medoo(array(
+                'database_type' => 'mysql',
+                'database_name' => $db_config['database'],
+                'server' => $db_config['hostname'],
+                'username' => $db_config['username'],
+                'password' => $db_config['password'],
+                'charset' => 'utf8mb64'
+            ));
+        }
+        return self::$db;
     }
 }

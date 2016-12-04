@@ -9,21 +9,10 @@ if(empty($_SESSION['email'])){
     exit;
 }
 
-require_once __DIR__.'/../vendor/autoload.php';
 require_once __DIR__.'/../includes/ProcessData.php';
 
 $attachment_id = intval($_REQUEST['id']);
-$db_config = require __DIR__.'/../config/config.db.php';
-$db = new medoo(array(
-    'database_type' => 'mysql',
-    'database_name' => $db_config['database'],
-    'server' => $db_config['hostname'],
-    'username' => $db_config['username'],
-    'password' => $db_config['password'],
-    'charset' => 'utf8mb64'
-));
-
-$attachment = $db->get('attachments', array('attachment', 'uid'), array('id'=>$attachment_id));
+$attachment = ProcessData::get_db_object()->get('attachments', array('attachment', 'uid'), array('id'=>$attachment_id));
 // file must be relative. Browser can't display absolute paths
 $filename = 'receipts_attachments/'.ProcessData::hash_filename($attachment['attachment'], $attachment['uid']);
 
