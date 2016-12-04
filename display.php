@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__.'/includes/ProcessData.php';
+
 $session_title = include_once __DIR__ .'/config/config.session.php';
 session_name($session_title);
 session_start();
@@ -8,15 +10,13 @@ if(empty($_SESSION['email'])){
     display_404();
 }
 
-require_once __DIR__.'/Lib/php/PDO_Connection.php';
-require_once __DIR__.'/includes/ProcessData.php';
+$attachment_id = $_REQUEST['id'];
+if(!ProcessData::is_valid_uuid($attachment_id)){
+    display_404();
+}
 
-$id = intval($_REQUEST['id']);
-$db = new PDO_Connection('jdenoc_money_tracker', __DIR__.'/config/config.db.php');
-
-$attachment = $db->getRow("SELECT * FROM attachments WHERE id=:attachment_id;", array('attachment_id'=>$id));
-// file must be relative. Browser can't display absolute paths
-$filename = __DIR__.DIRECTORY_SEPARATOR.'receipts_attachments'.DIRECTORY_SEPARATOR.ProcessData::hash_filename($attachment['attachment'], $attachment['uid']);
+$attachment = ProcessData::get_db_object()->get('attachments', 'attachment', array('uuid'=>$attachment_id));
+$filename = __DIR__.DIRECTORY_SEPARATOR.'receipts_attachments'.DIRECTORY_SEPARATOR.ProcessData::hash_filename($attachment, $attachment_id);
 
 if(!file_exists($filename)){
     display_404();
@@ -31,7 +31,7 @@ switch($ext){
     case 'gif':
     case 'jpg':
     case 'jpeg':
-        display_image($id);
+        display_image($attachment_id);
         break;
     default:
         // Do nothing.

@@ -1,8 +1,4 @@
 <?php
-/**
- * User: denis
- * Date: 2014-08-12
- */
 
 require_once __DIR__.'/../vendor/autoload.php';
 use Ramsey\Uuid\Uuid;
@@ -10,6 +6,7 @@ use Ramsey\Uuid\Uuid;
 class ProcessData {
 
     private static $auth;
+    private static $db;
     public static $error_title = 'Money-Tracker Request Error:';
 
     public static function make_call($url, $post=false, $post_data=array()){
@@ -45,15 +42,19 @@ class ProcessData {
      */
     public static function hash_filename($filename, $file_uid){
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
-        return md5($filename.$file_uid).'.'.$ext;
+        return sha1($filename.$file_uid).'.'.$ext;
     }
 
     /**
      * @return string
      */
-    public static function generate_file_uid(){
+    public static function generate_uuid(){
         $uuid4 = Uuid::uuid4();
         return $uuid4->toString();
+    }
+
+    public static function is_valid_uuid($uuid){
+        return Uuid::isValid($uuid);
     }
 
     public static function list_accounts($data){
@@ -147,13 +148,13 @@ class ProcessData {
 
     /**
      * @param string $attachment_name
-     * @param string $attachment_uid
+     * @param string $attachment_uuid
      * @return bool
      */
-    public static function upload_attachment($attachment_name, $attachment_uid){
+    public static function upload_attachment($attachment_name, $attachment_uuid){
         $output_dir = __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."receipts_attachments".DIRECTORY_SEPARATOR;
         $temp_file = sys_get_temp_dir().DIRECTORY_SEPARATOR.$attachment_name;
-        return (file_exists($temp_file) && rename($temp_file, $output_dir.self::hash_filename($attachment_name, $attachment_uid)));
+        return (file_exists($temp_file) && rename($temp_file, $output_dir.self::hash_filename($attachment_name, $attachment_uuid)));
     }
 
     /**
@@ -163,10 +164,10 @@ class ProcessData {
     public static function upload_attachments($attachments){
         $uploaded_attachments = array();
         foreach($attachments as $attachment){
-            $uid = self::generate_file_uid();
-            $uploaded = self::upload_attachment($attachment, $uid);
+            $uuid = self::generate_uuid();
+            $uploaded = self::upload_attachment($attachment, $uuid);
             if($uploaded){
-                $uploaded_attachments[] = array('filename'=>$attachment, 'uid'=>$uid);
+                $uploaded_attachments[] = array('filename'=>$attachment, 'uuid'=>$uuid);
             }
         }
         return $uploaded_attachments;
@@ -201,5 +202,24 @@ class ProcessData {
         $display .= "\tvar types = ".json_encode($types).";\r\n";
         $display .= "</script>";
         return $display;
+    }
+
+    /**
+     * Returns a medoo database object
+     * @return medoo
+     */
+    public static function get_db_object(){
+        if(is_null(self::$db)){
+            $db_config = require __DIR__.'/../config/config.db.php';
+            self::$db = new medoo(array(
+                'database_type' => 'mysql',
+                'database_name' => $db_config['database'],
+                'server' => $db_config['hostname'],
+                'username' => $db_config['username'],
+                'password' => $db_config['password'],
+                'charset' => 'utf8mb64'
+            ));
+        }
+        return self::$db;
     }
 }
