@@ -42,13 +42,13 @@ class ProcessData {
      */
     public static function hash_filename($filename, $file_uid){
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
-        return md5($filename.$file_uid).'.'.$ext;
+        return sha1($filename.$file_uid).'.'.$ext;
     }
 
     /**
      * @return string
      */
-    public static function generate_file_uid(){
+    public static function generate_uuid(){
         $uuid4 = Uuid::uuid4();
         return $uuid4->toString();
     }
@@ -160,7 +160,7 @@ class ProcessData {
     public static function upload_attachments($attachments){
         $uploaded_attachments = array();
         foreach($attachments as $attachment){
-            $uid = self::generate_file_uid();
+            $uid = self::generate_uuid();
             $uploaded = self::upload_attachment($attachment, $uid);
             if($uploaded){
                 $uploaded_attachments[] = array('filename'=>$attachment, 'uid'=>$uid);
