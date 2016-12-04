@@ -10,9 +10,13 @@ if(empty($_SESSION['email'])){
     display_404();
 }
 
-$attachment_id = intval($_REQUEST['id']);
-$attachment = ProcessData::get_db_object()->get('attachments', array('attachment', 'uid'), array('id'=>$attachment_id));
-$filename = __DIR__.DIRECTORY_SEPARATOR.'receipts_attachments'.DIRECTORY_SEPARATOR.ProcessData::hash_filename($attachment['attachment'], $attachment['uid']);
+$attachment_id = $_REQUEST['id'];
+if(!ProcessData::is_valid_uuid($attachment_id)){
+    display_404();
+}
+
+$attachment = ProcessData::get_db_object()->get('attachments', 'attachment', array('uuid'=>$attachment_id));
+$filename = __DIR__.DIRECTORY_SEPARATOR.'receipts_attachments'.DIRECTORY_SEPARATOR.ProcessData::hash_filename($attachment, $attachment_id);
 
 if(!file_exists($filename)){
     display_404();
