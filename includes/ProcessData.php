@@ -142,7 +142,8 @@ class ProcessData {
      * @return string
      */
     public static function get_base_rest_url(){
-        return rtrim(getenv("REST_SERVICE_BASE_URL"), '/');
+        $rest_base_url = self::get_env_value("REST_SERVICE_BASE_URL");
+        return rtrim($rest_base_url, '/');
     }
 
     /**
@@ -211,13 +212,32 @@ class ProcessData {
         if(is_null(self::$db)){
             self::$db = new medoo(array(
                 'database_type' => 'mysql',
-                'database_name' => getenv('DB_NAME'),
-                'server' => getenv('DB_HOST'),
-                'username' => getenv('DB_USER'),
-                'password' => getenv('DB_PASS'),
-                'charset' => 'utf8mb64'
+                'database_name' => self::get_env_value('DB_NAME'),
+                'server'        => self::get_env_value('DB_HOST'),
+                'username'      => self::get_env_value('DB_USER'),
+                'password'      => self::get_env_value('DB_PASS'),
+                'charset'       => 'utf8mb64'
             ));
         }
         return self::$db;
+    }
+
+    /**
+     * @param string $env_key
+     * @param mixed $default_value
+     * @return mixed
+     * @throws Exception
+     */
+    public static function get_env_value($env_key, $default_value = null){
+        $env_value = getenv($env_key);
+        if($env_value === false){
+            if(is_null($default_value)){
+                throw new Exception(sprintf("Environment variable %s not set. Default value not provided.", $env_key));
+            } else {
+                $env_value = $default_value;
+            }
+        }
+
+        return $env_value;
     }
 }
