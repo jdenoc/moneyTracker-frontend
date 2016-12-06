@@ -94,7 +94,7 @@ switch($_REQUEST['type']){
 $json_response = ProcessData::make_call(ProcessData::get_base_rest_url().$uri, $post, $post_data);
 
 if(!$response_array = json_decode($json_response, true)){
-    error_log(ProcessData::$error_title."failed JSON response\n".$json_response);
+    error_log(ProcessData::ERROR_LABEL."failed JSON response\n".$json_response);
     header("HTTP/1.1 500 Internal Server Error");
     exit;
 } else {
@@ -102,7 +102,7 @@ if(!$response_array = json_decode($json_response, true)){
         $response = call_user_func(array('ProcessData', $callback), $response_array['result']);
         echo $response;
     } else {
-        error_log(ProcessData::$error_title."response error\n".$response_array['error']);
+        error_log(ProcessData::ERROR_LABEL."response error\n".$response_array['error']);
         header("HTTP/1.1 400 Bad Request");
         exit;
     }

@@ -6,9 +6,10 @@ use Ramsey\Uuid\Uuid;
 
 class ProcessData {
 
+    const ERROR_LABEL = 'Money-Tracker Request Error:';
+
     private static $auth;
     private static $db;
-    public static $error_title = 'Money-Tracker Request Error:';
 
     public static function make_call($url, $post=false, $post_data=array()){
         $ch = curl_init();
@@ -26,7 +27,7 @@ class ProcessData {
         $result = curl_exec($ch);
 
         if (curl_errno($ch)) {
-            error_log(self::$error_title."services connection issue\nURL:".$url."\n".curl_error($ch));
+            error_log(self::ERROR_LABEL."services connection issue\nURL:".$url."\n".curl_error($ch));
         }
         curl_close($ch);
         return $result;
@@ -75,13 +76,13 @@ class ProcessData {
 
         $json_response = self::make_call(self::get_base_rest_url().'/tags');
         if(!$tags_data = json_decode($json_response, true)){
-            error_log(self::$error_title.$json_response);
+            error_log(self::ERROR_LABEL.$json_response);
             $tags = array();
         } else {
             if(empty($response_array['error'])){
                 $tags = self::base_process($tags_data['result']);
             } else {
-                error_log(self::$error_title.$response_array['error']);
+                error_log(self::ERROR_LABEL.$response_array['error']);
                 $tags = array();
             }
         }
