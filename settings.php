@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__.'/includes/initialise_env.php';
-session_name(getenv("SESSION_NAME"));
+session_name(ProcessData::get_env_value("SESSION_NAME"));
 session_start();
 if(empty($_SESSION['email'])){
     header('Location: logout.php');

@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__.'/includes/initialise_env.php';
+require_once __DIR__.'/includes/ProcessData.php';
 
-session_name(getenv("SESSION_NAME"));
+session_name(ProcessData::get_env_value("SESSION_NAME"));
 session_start();
 $_SESSION['name'] = '';
 $_SESSION['pic'] = '';

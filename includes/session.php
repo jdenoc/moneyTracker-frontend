@@ -6,7 +6,7 @@ $user = ProcessData::get_db_object()->get("users", 'id', array('email'=>$_REQUES
 if(empty($user)){
     print 0;
 } else {
-    session_name(getenv("SESSION_NAME"));
+    session_name(ProcessData::get_env_value("SESSION_NAME"));
     session_start();
     $_SESSION['name'] = $_REQUEST['name'];
     $_SESSION['pic'] = $_REQUEST['pic'];
