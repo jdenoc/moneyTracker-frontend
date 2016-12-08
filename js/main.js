@@ -229,13 +229,12 @@ var entry = {
         entryData.id = $('#entry_id').val();
         entryData.date = $('#entry_date').val();
         entryData.value = $('#entry_value').val();
-        entryData.account_type = $('#entry_account_type').val();
+        entryData.accountType = $('#entry_account_type').val();
         entryData.memo = $('#entry_memo').val();
         entryData.tags = $('#entry_tags').val().split(',');
         entryData.expense = $('#entry_minus').prop('checked') ? 1 : 0;
         entryData.confirm = $('#entry_confirm').prop('checked') ? 1 : 0;
         entryData.attachments = JSON.parse( $('#entry_attachments').val() );
-        entryData.has_attachment = $('#entry_has_attachment').val();
 
         $('#entry_data').val( JSON.stringify(entryData) );
     },
