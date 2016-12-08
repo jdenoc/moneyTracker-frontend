@@ -99,9 +99,9 @@ class ProcessData {
             $display .= '  <td class="check-col" data-toggle="modal" data-target="#entry-modal" onclick="editDisplay.fill('.$row['id'].');">';
             $display .= '      <span class="glyphicon glyphicon-pencil"></span>';
             $display .= '  </td>';
-            $display .= '  <td class="date-col">'.$row['date'].'</td>';
+            $display .= '  <td class="date-col">'.$row['entry_date'].'</td>';
             $display .= '  <td>'.$row['memo'].'</td>';
-            $display .= '  <td class="value-col">$'.number_format($row['value'], 2).'</td>';
+            $display .= '  <td class="value-col">$'.number_format($row['entry_value'], 2).'</td>';
             $display .= '  <td class="type-col"><span class="glyphicon glyphicon-list-alt" onclick="alert(\''.$row['account_type_name'].' ('.$row['account_last_digits'].')\n'.($row['expense']?'Expense':'Income').($row['confirm']?'\nConfirmed':'').'\')"></span></td>';
             $display .= '  <td><input type="checkbox" '.($row['has_attachment']==1 ? 'checked' : '' ).' onclick="return false;" /></td>';
             $display .= '  <td>'.$tag_displays.'</td>';
