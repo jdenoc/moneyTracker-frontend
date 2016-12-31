@@ -10,6 +10,7 @@ class ProcessData {
 
     private static $auth;
     private static $db;
+    private static $env = array();
 
     public static function make_call($url, $post=false, $post_data=array()){
         $ch = curl_init();
@@ -229,15 +230,17 @@ class ProcessData {
      * @throws Exception
      */
     public static function get_env_value($env_key, $default_value = null){
-        $env_value = getenv($env_key);
-        if($env_value === false){
-            if(is_null($default_value)){
-                throw new Exception(sprintf("Environment variable %s not set. Default value not provided.", $env_key));
-            } else {
-                $env_value = $default_value;
+        if(empty(self::$env[$env_key])) {   // we need to cache the value, otherwise sometimes getenv() doesn't work :(
+            $env_value = getenv($env_key);
+            if ($env_value === false) {
+                if (is_null($default_value)) {
+                    throw new Exception(sprintf("Environment variable %s not set. Default value not provided.", $env_key));
+                } else {
+                    $env_value = $default_value;
+                }
             }
+            self::$env[$env_key] = $env_value;
         }
-
-        return $env_value;
+        return self::$env[$env_key];
     }
 }
