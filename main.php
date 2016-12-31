@@ -3,7 +3,10 @@
  * User: denis
  * Date: 2014-02-03
  */
-$session_title = include_once(__DIR__ . '/config/config.session.php');
+
+require_once __DIR__.'/includes/ProcessData.php';
+
+$session_title = require __DIR__.'/config/config.session.php';
 session_name($session_title);
 session_start();
 if(empty($_SESSION['email'])){
@@ -11,9 +14,11 @@ if(empty($_SESSION['email'])){
     exit;
 }
 
-require_once(__DIR__.'/Lib/php/PDO_Connection.php');
-$db = new PDO_Connection('jdenoc_money_tracker', __DIR__.'/config/config.db.php');
-$account_types = $db->getAllRows("SELECT id, type_name, last_digits FROM account_types WHERE disabled=0 ORDER BY type_name, last_digits");
+$account_types = ProcessData::get_db_object()->select(
+    "account_types",
+    array('id', 'type_name', 'last_digits'),
+    array('disabled'=>0, "ORDER"=>array('type_name', 'last_digits'))
+);
 $account_type_options = '';
 foreach($account_types as $at){
     $account_type_options .= '<option value="'.$at['id'].'">'.$at['type_name'].' ('.$at['last_digits'].')</option>'."\r\n";

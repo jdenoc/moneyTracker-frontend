@@ -9,21 +9,19 @@
  * TODO - If there is a discrepancy, then email.
  */
 
-require_once(__DIR__.'/../Lib/php/PDO_Connection.php');
-$db = new PDO_Connection('jdenoc_money_tracker', __DIR__.'/../config/config.db.php');
+require_once __DIR__.'/../includes/ProcessData.php';
 
-$accounts = $db->getAllRows("SELECT * FROM accounts");
+$accounts = ProcessData::get_db_object()->select('accounts', '*');
 $msg = "";
 foreach($accounts AS $account){
-    $should_be = $db->getValue(
-        "SELECT SUM( IF( e.expense=1, -1*e.value, e.value ) )
-            FROM entries AS e
-            INNER JOIN account_types AS a ON a.id = e.account_type
-            WHERE a.account_group = :account_group
-            AND e.deleted =0
-            ORDER BY e.`date` DESC , e.id DESC",
-        array('account_group'=>$account['id'])
-    );
+    $query = "SELECT IFNULL( SUM( IF( e.expense=1, -1*e.value, e.value ) ), 0 )
+      FROM entries AS e
+      INNER JOIN account_types AS a
+        ON a.id = e.account_type
+      WHERE a.account_group = ".ProcessData::get_db_object()->quote($account['id'])."
+      AND e.deleted =0
+      ORDER BY e.date DESC , e.id DESC";
+    $should_be = ProcessData::get_db_object()->query($query)->fetch(PDO::FETCH_COLUMN);
 
     if($should_be != $account['total']){
         $msg .= 'Account:'.$account['account']."\r\n\tIS: $".$account['total']."\r\n\tShould Be: $".$should_be."\r\n\tDiff: $".abs($should_be-$account['total'])."\r\n";
