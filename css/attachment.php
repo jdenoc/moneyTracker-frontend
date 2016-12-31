@@ -10,7 +10,7 @@ if(empty($_SESSION['email'])){
 
 require_once __DIR__.'/../includes/ProcessData.php';
 
-$attachment_id = $_REQUEST['id'];
+$attachment_id = $_REQUEST['uuid'];
 if(!ProcessData::is_valid_uuid($attachment_id)){
     display_404();
 }
