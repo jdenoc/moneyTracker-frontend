@@ -358,7 +358,7 @@ var filter = {
 
 var attachments = {
     open: function(attachmentId){
-        var url = '/display/'+attachmentId;
+        var url = '/attachment/'+attachmentId;
         var win=window.open(url, '_blank');
         win.focus();
     },
