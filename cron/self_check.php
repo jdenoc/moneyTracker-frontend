@@ -14,13 +14,13 @@ require_once __DIR__.'/../includes/ProcessData.php';
 $accounts = ProcessData::get_db_object()->select('accounts', '*');
 $msg = "";
 foreach($accounts AS $account){
-    $query = "SELECT IFNULL( SUM( IF( e.expense=1, -1*e.value, e.value ) ), 0 )
+    $query = "SELECT IFNULL( SUM( IF( e.expense=1, -1*e.entry_value, e.entry_value ) ), 0 )
       FROM entries AS e
       INNER JOIN account_types AS a
         ON a.id = e.account_type
       WHERE a.account_group = ".ProcessData::get_db_object()->quote($account['id'])."
-      AND e.deleted =0
-      ORDER BY e.date DESC , e.id DESC";
+      AND e.deleted = 0
+      ORDER BY e.entry_date DESC , e.id DESC";
     $should_be = ProcessData::get_db_object()->query($query)->fetch(PDO::FETCH_COLUMN);
 
     if($should_be != $account['total']){

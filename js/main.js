@@ -81,8 +81,8 @@ var editDisplay = {
                     }
                 });
                 $('#entry-title').html('Entry: '+editData['id']);
-                $('#entry_date').val(editData['date']);
-                $('#entry_value').val(editData['value']);
+                $('#entry_date').val(editData['entry_date']);
+                $('#entry_value').val(editData['entry_value']);
                 $('#entry_account_type').val(editData['account_type']);
                 $('#entry_memo').val(editData['memo']);
                 $("#entry_tags").importTags('');
