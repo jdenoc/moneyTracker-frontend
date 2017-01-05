@@ -57,7 +57,11 @@ switch($_REQUEST['type']){
         $uri = 'save';
         $post = true;
         $data = json_decode(ProcessData::clean_input('entry_data'), true);
+        $data['entry_date'] = $data['date'];
+        $data['entry_value'] = $data['value'];
+        $data['account_type'] = $data['accountType'];
         $data['attachments'] = ProcessData::upload_attachments($data['attachments']);
+        unset($data['date'], $data['value'], $data['accountType']);
         $post_data = array('data'=>base64_encode(json_encode($data)));
         $callback = 'do_nothing';
         unset($data);
