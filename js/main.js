@@ -361,9 +361,9 @@ var attachments = {
         var win=window.open(url, '_blank');
         win.focus();
     },
-    del: function(attachmentId){
+    del: function(attachmentId, attachmentName){
         var entryId = $('#entry_id').val();
-        if(confirm('Are you sure you want to delete attachment: '+attachmentId)){
+        if(confirm('Are you sure you want to delete attachment: '+attachmentName)){
             $.ajax({
                 type: 'POST',
                 url: url+nocache(),
@@ -389,7 +389,7 @@ var attachments = {
         $('#entry_has_attachment').val(1);
         $('#display_attachments').append(
             ' <li class="list-group-item" id="attachment_'+att.uuid+'">'+att.filename+
-                '<button type="button" class="btn btn-danger glyphicon glyphicon-trash" onclick="attachments.del(\''+att.uuid+'\');"></button>'+
+                '<button type="button" class="btn btn-danger glyphicon glyphicon-trash" onclick="attachments.del(\''+att.uuid+'\', \''+att.filename+'\');"></button>'+
                 '<button type="button" class="btn btn-default glyphicon glyphicon-search" onclick="attachments.open(\''+att.uuid+'\');"></button>'+
             '</li>'
         );
