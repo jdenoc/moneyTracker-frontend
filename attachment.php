@@ -10,7 +10,7 @@ if(empty($_SESSION['email'])){
     display_404();
 }
 
-$attachment_id = $_REQUEST['uuid'];
+$attachment_id = empty($_REQUEST['uuid']) ? '' : $_REQUEST['uuid'];
 if(!ProcessData::is_valid_uuid($attachment_id)){
     display_404();
 }
