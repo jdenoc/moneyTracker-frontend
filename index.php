@@ -1,13 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: denis
- * Date: 3/2/14
- * Time: 11:35 AM
- */
 
-$session_title = include_once(__DIR__ . '/config/config.session.php');
-session_name($session_title);
+require_once __DIR__.'/includes/ProcessData.php';
+
+session_name(ProcessData::get_env_value("SESSION_NAME"));
 session_start();
 if(!empty($_SESSION['email'])){
     header('Location: main.php');

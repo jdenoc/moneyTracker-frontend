@@ -1,11 +1,7 @@
 <?php
-/**
- * User: denis
- * Date: 2014-05-10
- */
 
-$session_title = include_once(__DIR__.'/config/config.session.php');
-session_name($session_title);
+require_once __DIR__.'/includes/initialise_env.php';
+session_name(ProcessData::get_env_value("SESSION_NAME"));
 session_start();
 if(empty($_SESSION['email'])){
     header('Location: logout.php');

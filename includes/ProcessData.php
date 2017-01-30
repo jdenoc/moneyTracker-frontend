@@ -1,13 +1,16 @@
 <?php
 
 require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/initialise_env.php';
 use Ramsey\Uuid\Uuid;
 
 class ProcessData {
 
+    const ERROR_LABEL = 'Money-Tracker Request Error:';
+
     private static $auth;
     private static $db;
-    public static $error_title = 'Money-Tracker Request Error:';
+    private static $env = array();
 
     public static function make_call($url, $post=false, $post_data=array()){
         $ch = curl_init();
@@ -25,7 +28,7 @@ class ProcessData {
         $result = curl_exec($ch);
 
         if (curl_errno($ch)) {
-            error_log(self::$error_title."services connection issue\nURL:".$url."\n".curl_error($ch));
+            error_log(self::ERROR_LABEL."services connection issue\nURL:".$url."\n".curl_error($ch));
         }
         curl_close($ch);
         return $result;
@@ -72,15 +75,15 @@ class ProcessData {
         $entries = self::base_process($data);
         $display = '';
 
-        $json_response = self::make_call(self::get_url().'tags');
+        $json_response = self::make_call(self::get_base_rest_url().'/tags');
         if(!$tags_data = json_decode($json_response, true)){
-            error_log(self::$error_title.$json_response);
+            error_log(self::ERROR_LABEL.$json_response);
             $tags = array();
         } else {
             if(empty($response_array['error'])){
                 $tags = self::base_process($tags_data['result']);
             } else {
-                error_log(self::$error_title.$response_array['error']);
+                error_log(self::ERROR_LABEL.$response_array['error']);
                 $tags = array();
             }
         }
@@ -133,17 +136,15 @@ class ProcessData {
     public static function decode($data){
         return base64_decode($data);
     }
-    
-    private static function get_env(){
-        return getenv('ENV_TYPE');
-    }
-    
-    public static function get_url(){
-        if(self::get_env() == 'live'){
-            return 'https://services.jdenoc.com/api/money_tracker/';
-        } else {
-            return 'http://services.local/api/money_tracker/';
-        }
+
+    /**
+     * Obtains the base URL to the REST service from an environment variable
+     * REST service base URL does NOT end with a /
+     * @return string
+     */
+    public static function get_base_rest_url(){
+        $rest_base_url = self::get_env_value("REST_SERVICE_BASE_URL");
+        return rtrim($rest_base_url, '/');
     }
 
     /**
@@ -210,16 +211,36 @@ class ProcessData {
      */
     public static function get_db_object(){
         if(is_null(self::$db)){
-            $db_config = require __DIR__.'/../config/config.db.php';
             self::$db = new medoo(array(
                 'database_type' => 'mysql',
-                'database_name' => $db_config['database'],
-                'server' => $db_config['hostname'],
-                'username' => $db_config['username'],
-                'password' => $db_config['password'],
-                'charset' => 'utf8mb64'
+                'database_name' => self::get_env_value('DB_NAME'),
+                'server'        => self::get_env_value('DB_HOST'),
+                'username'      => self::get_env_value('DB_USER'),
+                'password'      => self::get_env_value('DB_PASS'),
+                'charset'       => 'utf8mb64'
             ));
         }
         return self::$db;
+    }
+
+    /**
+     * @param string $env_key
+     * @param mixed $default_value
+     * @return mixed
+     * @throws Exception
+     */
+    public static function get_env_value($env_key, $default_value = null){
+        if(empty(self::$env[$env_key])) {   // we need to cache the value, otherwise sometimes getenv() doesn't work :(
+            $env_value = getenv($env_key);
+            if ($env_value === false) {
+                if (is_null($default_value)) {
+                    throw new Exception(sprintf("Environment variable %s not set. Default value not provided.", $env_key));
+                } else {
+                    $env_value = $default_value;
+                }
+            }
+            self::$env[$env_key] = $env_value;
+        }
+        return self::$env[$env_key];
     }
 }

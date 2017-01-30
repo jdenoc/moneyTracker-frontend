@@ -2,9 +2,9 @@
 .DS_Store
 *.ini
 
-config/config.*
 receipts_attachments/*
 !receipts_attachments/.gitkeep
+.env
 
 vendor
 composer.lock
